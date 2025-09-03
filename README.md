@@ -20,7 +20,7 @@ This project analyzes **Approach** and **Landing** performance from any given fl
 
 
     <p align="left">
-    <img src="Results/[2025.08.31] Phoenix_landing_3.png" alt="Touchdown Plot" width="600"/>
+    <img src="./Results/[2025.08.31] Phoenix_landing_3.png" alt="Touchdown Plot" width="600"/>
     </p>
 
 
