@@ -8,7 +8,7 @@ This project analyzes **Approach** and **Landing** performance from any given fl
 
 ## 🗽 Credits:
 - Fardad Pouran, callsign "*< 404 > D1CE*".
-- $\text{404}^{th}$ *Freelancers* Virtual Squadron DCS community.
+- $\textit{404}^{th}$ *Freelancers* Virtual Squadron DCS community.
 - [Tacview](https://www.tacview.net): exports flight telemetry data.
 
 ⚠️ **Note**: The dataset included for exhibition is from a massive flight data flown by 404th community. Here, the dataset is filtered to only two pilots to reduce the file size.
