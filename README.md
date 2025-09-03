@@ -20,7 +20,7 @@ This project analyzes **Approach** and **Landing** performance from any given fl
 
 
     <p align="left">
-    <img src="https://github.com/fardad-d1ce/Landing-Rating/blob/main/Results/%5B2025.08.31%5D%20Phoenix_landing_3.png?raw=true" alt="Approach Plot" width="600"/>
+    <img src="Results/2025.08.31_Phoenix_landing_3.png" width="600"/>
     </p>
 
 
@@ -34,7 +34,7 @@ This project analyzes **Approach** and **Landing** performance from any given fl
   | **Jerk** | $\textit{{fpm}}^3$ | Sudden change of impact-force/acceleration on aircraft's CG |
 
     <p align="left">
-    <img src="Results/Detailed Touchdowns/[2025.08.31]Phoenix_touch_3.png" alt="Touchdown Plot"  width="600" />
+    <img src="Results/Detailed Touchdowns/2025.08.31_Phoenix_touch_3.png" alt="Touchdown Plot"  width="600" />
     </p>
 
 ### Landing Rating Table
