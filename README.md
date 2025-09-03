@@ -4,6 +4,15 @@
 
 This project analyzes **Approach** and **Landing** performance from any given flight data telemetry containing multiple aircraft at once (real data, DCS, MSFS, etc.) to determine all **Final Approach** glideslopes, extract key touchdown/impact parameters, and generates visualizations of the landing approach and touchdown.
 
+>**Disclaimer** The project is still under development. Some features may not be fully implemented yet.
+
+## 🗽 Credits:
+- Fardad Pouran, callsign "*< 404 > D1CE*".
+- $\text{404}^{th}$ *Freelancers* Virtual Squadron DCS community.
+- [Tacview](https://www.tacview.net): exports flight telemetry data.
+
+⚠️ **Note**: The dataset included for exhibition is from a massive flight data flown by 404th community. Here, the dataset is filtered to only two pilots to reduce the file size.
+
 ## 🎯 Features
 ### 📉 Approach Analysis: 
 -   Visualizes **final approach glideslope** for each aircraft. Each descent segment is rated by a color.
@@ -11,7 +20,7 @@ This project analyzes **Approach** and **Landing** performance from any given fl
 
 
     <p align="left">
-    <img src="Results/[2025.08.31] Phoenix_landing_3.png" alt="Touchdown Plot" width="500"/>
+    <img src="Results/[2025.08.31] Phoenix_landing_3.png" alt="Touchdown Plot" width="600"/>
     </p>
 
 
@@ -25,7 +34,15 @@ This project analyzes **Approach** and **Landing** performance from any given fl
   | **Jerk** | $\textit{{fpm}}^3$ | Sudden change of impact-force/acceleration on aircraft's CG |
 
     <p align="left">
-    <img src="Results/Detailed Touchdowns/[2025.08.31]%Phoenix_touch_3.png" alt="Touchdown Plot"  width="500"/>
+    <img src="Results/Detailed Touchdowns/[2025.08.31] Phoenix_touch_3.png" alt="Touchdown Plot"  width="600" margin="2px"/>
+    </p>
+
+### Landing Rating Table
+- CSS styles landing table for each aircraft and each sortie.
+- Exports `.csv` of the table.
+
+  <p align="left">
+    <img src="Results/Rating table.jpg" alt="Touchdown Plot"  width="600"/>
     </p>
 
 ## 🚧 To be added
