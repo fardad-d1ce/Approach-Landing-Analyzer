@@ -20,7 +20,7 @@ This project analyzes **Approach** and **Landing** performance from any given fl
 
 
     <p align="left">
-    <img src="https://github.com/fardad-d1ce/Landing-Rating/blob/main/Results/%5B2025.08.31%5D%20Phoenix_landing_3.png?raw=true" alt="Touchdown Plot" width="600"/>
+    <img src="https://github.com/fardad-d1ce/Landing-Rating/blob/main/Results/%5B2025.08.31%5D%20Phoenix_landing_3.png?raw=true" alt="Approach Plot" width="600"/>
     </p>
 
 
