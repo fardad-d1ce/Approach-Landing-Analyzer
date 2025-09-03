@@ -34,7 +34,7 @@ This project analyzes **Approach** and **Landing** performance from any given fl
   | **Jerk** | $\textit{{fpm}}^3$ | Sudden change of impact-force/acceleration on aircraft's CG |
 
     <p align="left">
-    <img src="Results/Detailed Touchdowns/[2025.08.31] Phoenix_touch_3.png" alt="Touchdown Plot"  width="600" margin="2px"/>
+    <img src="/Results/Detailed Touchdowns/[2025.08.31] Phoenix_touch_3.png" alt="Touchdown Plot"  width="600" margin="2px"/>
     </p>
 
 ### Landing Rating Table
