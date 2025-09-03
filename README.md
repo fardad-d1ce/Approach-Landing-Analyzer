@@ -16,7 +16,7 @@ This project analyzes **Approach** and **Landing** performance from any given fl
 ## 🎯 Features
 ### 📉 Approach Analysis: 
 -   Visualizes **final approach glideslope** for each aircraft. Each descent segment is rated by a color.
-  - Also identifies if the aircraft bounces the touchdown!
+  - Also identifies if the aircraft bounces upon touchdown!
 
 
     <p align="left">
