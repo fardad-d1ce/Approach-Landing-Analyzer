@@ -11,7 +11,7 @@ This project analyzes **Approach** and **Landing** performance from any given fl
 
 
     <p align="left">
-    <img src="Results/[2025.08.31] D1CE_landing_1.png" alt="Touchdown Plot" width="500"/>
+    <img src="Results/[2025.08.31]%D1CE_landing_1.png" alt="Touchdown Plot" width="500"/>
     </p>
 
 
@@ -25,7 +25,7 @@ This project analyzes **Approach** and **Landing** performance from any given fl
   | **Jerk** | $\textit{{fpm}}^3$ | Sudden change of impact-force/acceleration on aircraft's CG |
 
     <p align="left">
-    <img src="Results/Detailed Touchdowns/[2025.08.31] Phoenix_touch_3.png" alt="Touchdown Plot"  width="500"/>
+    <img src="Results/Detailed Touchdowns/[2025.08.31]%Phoenix_touch_3.png" alt="Touchdown Plot"  width="500"/>
     </p>
 
 ## 🚧 To be added
