@@ -48,7 +48,7 @@ This project analyzes **Approach** and **Landing** performance from any given fl
 ## 🚧 To be added
 - **Landing Rating Criteria**: Customizable criteria for rating the landing performance.
   - Impact **G-force**.
-  - $\delta$: Landing gear stroke (the compression when the gear absorbs the impact).
+  - $\delta$: Landing gear stroke (gear compression distance when the gear absorbs the impact).
   - **Impact Time**: Time interval when gears are compressed until stabilization.
 - **User Interface**: A user-friendly GUI for easy interaction with the analysis tools.
 
