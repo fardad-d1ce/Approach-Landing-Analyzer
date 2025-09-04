@@ -2,9 +2,25 @@
 
 # ✈️ Landing Rate Analysis  
 
-This project analyzes **Approach** and **Landing** performance from any given flight data telemetry containing multiple aircraft at once (real data, DCS, MSFS, etc.) to determine all **Final Approach** glideslopes, extract key touchdown/impact parameters, and generates visualizations of the landing approach and touchdown.
+This project analyzes **Approach** and **Landing** performance from any given *flight data telemetry* containing multiple aircraft at once (real data, DCS, MSFS, etc.) to determine all **Final Approach** glideslopes, extract key touchdown/impact parameters, and generates visualizations of the landing approach and touchdown.
 
 >**Disclaimer** The project is still under development. Some features may not be fully implemented yet.
+
+## 📑 Data Dictionary
+
+This projects works on any flight data telemetry allowing the extraction of the following features:
+
+---
+
+| Feature   | Type      | Description                                                                 | Notes |
+|-----------|-----------|-----------------------------------------------------------------------------|-------|
+| **Pilot ID / Name** | *String*                       | Unique identifier of the pilot (acts as the **primary key**) | Must be unique per pilot in dataset |
+| **Datetime**        | *Timestamp*                    | Exact date and time of the recorded telemetry entry |  |
+| **AGL** (Altitude Above Ground Level) | *Float (ft)* | Aircraft altitude relative to the ground directly beneath |  |
+| **VS** (Vertical Speed)| *Float (ft/min)*            | Vertical speed at given moment | Can be calculated from rate of change of MSL altitude |
+| **CAS** (Calibrated Airspeed) | *Float (knots)* | Airspeed corrected for instrument/position errors |  |
+
+---
 
 ## 🗽 Credits:
 - Fardad Pouran, callsign "*< 404 > D1CE*".
