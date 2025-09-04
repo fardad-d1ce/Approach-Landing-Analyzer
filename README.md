@@ -4,7 +4,7 @@
 
 Bonjour!
 
-This is Fardad Pouran, callsign "*< 404 > D1CE*", from *404th Freelancers* Virtual Squadron community.
+This is Fardad Pouran, callsign "*< 404 > D1CE*"!
 
 This project analyzes **Approach** and **Landing** performance from any given *flight data telemetry* containing multiple aircraft at once (real data, DCS, MSFS, etc.) to determine all **Final Approach** glideslopes, extract key touchdown/impact parameters, and generates visualizations of the landing approach and touchdown.
 
@@ -18,7 +18,7 @@ This projects works on any flight data telemetry allowing the extraction of foll
 
 | Feature   | Type      | Description                                                                 | Notes |
 |-----------|-----------|-----------------------------------------------------------------------------|-------|
-| **Pilot ID / Name** | *String*                       | Unique identifier of the pilot (acts as the **primary key**) | Must be unique per pilot in dataset |
+| **Pilot ID / Name** | *String*                       | Unique identifier of the pilot (**primary key**) | Must be unique per pilot in dataset |
 | **Datetime**        | *Timestamp*                    | Exact date and time of the recorded telemetry entry |  |
 | **AGL** (Altitude Above Ground Level) | *Float (ft)* | Aircraft altitude relative to the ground directly beneath |  |
 | **VS** (Vertical Speed)| *Float (ft/min)*            | Vertical speed at given moment | Can be calculated from rate of change of MSL altitude |
@@ -89,3 +89,10 @@ This projects works on any flight data telemetry allowing the extraction of foll
 2. Run the `Landing Rate.ipynb` notebook.
 3. Check the `Results/` folder for the analysis outputs.
 4. Explore the `Detailed Touchdowns/` folder for detailed plots of each touchdown/impact.
+
+## 💙 Shoutouts & Acknowledgements  
+
+Special thanks to *404th Freelancers* Virtual Squadron community for their support, feedback, and inspiration.
+
+Check it out:
+[Youtube](https://youtube.com/@404freelancers)
