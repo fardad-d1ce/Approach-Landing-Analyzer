@@ -2,6 +2,9 @@
 
 # ✈️ Landing Rate Analysis  
 
+Bonjour!
+This is Fardad Pouran, callsign "*< 404 > D1CE*", from *404th Freelancers* Virtual Squadron DCS community.
+
 This project analyzes **Approach** and **Landing** performance from any given *flight data telemetry* containing multiple aircraft at once (real data, DCS, MSFS, etc.) to determine all **Final Approach** glideslopes, extract key touchdown/impact parameters, and generates visualizations of the landing approach and touchdown.
 
 >**Disclaimer** The project is still under development. Some features may not be fully implemented yet.
@@ -22,12 +25,7 @@ This projects works on any flight data telemetry allowing the extraction of foll
 
 ---
 
-## 🗽 Credits:
-- Fardad Pouran, callsign "*< 404 > D1CE*".
-- *404th Freelancers* Virtual Squadron DCS community.
-- [Tacview](https://www.tacview.net): exports flight telemetry data.
-
-⚠️ **Note**: The dataset included for exhibition is from a massive flight data flown by 404th community. Here, the dataset is filtered to only two pilots to reduce the file size.
+⚠️ **Note**: The dataset included for exhibition is exported from a [tacview](https://www.tacview.net) file on a massive flight data flown by 404th community. Here, the dataset is filtered to only two pilots to reduce the file size.
 
 ## 🎯 Features
 ### 📉 Approach Analysis: 
