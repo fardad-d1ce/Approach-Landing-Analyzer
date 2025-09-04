@@ -6,9 +6,9 @@ This project analyzes **Approach** and **Landing** performance from any given *f
 
 >**Disclaimer** The project is still under development. Some features may not be fully implemented yet.
 
-## 📑 Data Dictionary
+## 📑 Flight Data Telemetry
 
-This projects works on any flight data telemetry allowing the extraction of the following features:
+This projects works on any flight data telemetry allowing the extraction of following features:
 
 ---
 
