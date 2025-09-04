@@ -96,5 +96,6 @@ Special thanks to *404th Freelancers* Virtual Squadron community for their suppo
 
 Check it out:
 
-[![Youtube](https://youtube.com/@404freelancers)
+![[Youtube](<img width="640" height="443" alt="image" src="https://github.com/user-attachments/assets/b8f2acc3-2f1e-439c-a91f-3cd0c33f1089" />
+)](https://youtube.com/@404freelancers)
 [Instagram](https://www.instagram.com/404freelancers/)
