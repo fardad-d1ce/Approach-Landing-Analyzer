@@ -97,13 +97,13 @@ Special thanks to *404th Freelancers* Virtual Squadron community for their suppo
 Check it out:
 
 <p align="left">
-  <img src="404 logo 404..png" width="600"/>
+  <img src="logo404_original.jpg" width="100"/>
 </p>
 
 <a href="https://youtube.com/@404freelancers" target="_blank">
- <img height="50" alt="404" src="https://upload.wikimedia.org/wikipedia/commons/e/ef/Youtube_logo.png" />
+ <img height="20" alt="404" src="https://upload.wikimedia.org/wikipedia/commons/e/ef/Youtube_logo.png" />
 </a>
 
 <a href="https://youtube.com/@404freelancers" target="_blank">
- <img height="50" alt="404" src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" />
+ <img height="20" alt="404" src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" />
 </a>
