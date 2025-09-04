@@ -102,7 +102,7 @@ Check it out: <a href="https://youtube.com/@404freelancers" target="_blank">
               </a>
 
 <p align="left">
-  <img src="logo404_original.jpg" width="100"/>
+  <img src="logo404_original.jpg" width="150"/>
 </p>
 
 
