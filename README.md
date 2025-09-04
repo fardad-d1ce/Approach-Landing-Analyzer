@@ -94,16 +94,17 @@ This projects works on any flight data telemetry allowing the extraction of foll
 
 Special thanks to *404th Freelancers* Virtual Squadron community for their support, feedback, and inspiration.
 
-Check it out:
+Check it out: <a href="https://youtube.com/@404freelancers" target="_blank">
+              <img height="20" alt="404" src="https://upload.wikimedia.org/wikipedia/commons/e/ef/Youtube_logo.png" />
+              </a>
+              <a href="https://youtube.com/@404freelancers" target="_blank">
+              <img height="20" alt="404" src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" />
+              </a>
 
 <p align="left">
   <img src="logo404_original.jpg" width="100"/>
 </p>
 
-<a href="https://youtube.com/@404freelancers" target="_blank">
- <img height="20" alt="404" src="https://upload.wikimedia.org/wikipedia/commons/e/ef/Youtube_logo.png" />
-</a>
 
-<a href="https://youtube.com/@404freelancers" target="_blank">
- <img height="20" alt="404" src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" />
-</a>
+
+
