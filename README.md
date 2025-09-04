@@ -97,9 +97,9 @@ Special thanks to *404th Freelancers* Virtual Squadron community for their suppo
 Check it out:
 
 <a href="https://youtube.com/@404freelancers" target="_blank">
- <img width="100" alt="404" src="[https://github.com/user-attachments/assets/b8f2acc3-2f1e-439c-a91f-3cd0c33f1089](https://upload.wikimedia.org/wikipedia/commons/e/ef/Youtube_logo.png)" />
+ <img width="100" alt="404" src="https://upload.wikimedia.org/wikipedia/commons/e/ef/Youtube_logo.png" />
 </a>
 
 <a href="https://youtube.com/@404freelancers" target="_blank">
- <img width="100" alt="404" src="[https://github.com/user-attachments/assets/b8f2acc3-2f1e-439c-a91f-3cd0c33f1089](https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png)" />
+ <img width="100" alt="404" src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" />
 </a>
