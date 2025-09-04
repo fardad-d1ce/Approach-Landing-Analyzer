@@ -95,4 +95,6 @@ This projects works on any flight data telemetry allowing the extraction of foll
 Special thanks to *404th Freelancers* Virtual Squadron community for their support, feedback, and inspiration.
 
 Check it out:
-[Youtube](https://youtube.com/@404freelancers)
+
+[![Youtube](https://youtube.com/@404freelancers)
+[Instagram](https://www.instagram.com/404freelancers/)
