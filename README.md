@@ -45,9 +45,9 @@ This projects works on any flight data telemetry allowing the extraction of foll
 
   | Quantity | Unit | Description |
   | --- | --- | --- |
-  | **Vertical Speed** |  $\textit{{fpm}}$ | Vertical speed at touchdown |
-  | **Vertical Acceleration** | $\textit{{fpm}}^2$ | Vertical impact-force/acceleration on aircraft CG|
-  | **Jerk** | $\textit{{fpm}}^3$ | Sudden change of impact-force/acceleration on aircraft's CG |
+  | **Vertical Speed** |  $\textit{fpm}$ | Vertical speed at touchdown |
+  | **Vertical Acceleration** | $\textit{fpm}^2$ | Vertical impact-force/acceleration on aircraft CG|
+  | **Jerk** | $\textit{fpm}^3$ | Sudden change of impact-force/acceleration on aircraft's CG |
 
     <p align="left">
     <img src="Results/Detailed Touchdowns/2025.08.31_Phoenix_touch_3.png" alt="Touchdown Plot"  width="600" />
