@@ -1,0 +1,43 @@
+# =========================
+# Project-Specific Ignores
+# =========================
+
+# Datasets
+Datasets/
+# Except the sample datasets
+!Datasets/Reduced_Tacview-20250831-211257-DCS-Client-IQT-1 Checkride 1.csv
+!Datasets/Tacview-20250831-211257-DCS-Client-IQT-1 Checkride 1.1 .zip.acmi
+
+# Result files
+Results/
+# Except the sample result
+!Results/[20250831] IQT-1 Checkride 1/
+
+# Old files
+Landing Rate_old.ipynb
+
+# =========================
+# Python / Environment
+# =========================
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+.env
+
+# uv specific
+.uv/
+
+# =========================
+# Jupyter Notebooks
+# =========================
+.ipynb_checkpoints/
+
+# =========================
+# IDEs / Editors
+# =========================
+.vscode/
+.idea/
+.trae/
+*.swp
+.DS_Store
