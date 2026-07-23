@@ -17,7 +17,7 @@ This project analyzes **Approach** and **Landing** performance from any given *f
 
 
     <p align="left">
-    <img src="Results\[20250831] IQT-1 Checkride 1\20250831_( 404C ) Phoenix_landing_3.png" width="600"/>
+    <img src="Results/[20250831]%20IQT-1%20Checkride%201/20250831_(%20404C%20)%20Phoenix_landing_3.png" width="600"/>
     </p>
 
 
@@ -31,7 +31,7 @@ This project analyzes **Approach** and **Landing** performance from any given *f
   | **Jerk** | *fpm<sup>3</sup>* | Sudden change of impact-force/acceleration on aircraft's CG |
 
     <p align="left">
-    <img src="Results\[20250831] IQT-1 Checkride 1\Detailed Touchdowns\20250831_( 404C ) Phoenix_touch_3.png" alt="Touchdown Plot"  width="600" />
+    <img src="Results/[20250831]%20IQT-1%20Checkride%201/Detailed%20Touchdowns/20250831_(%20404C%20)%20Phoenix_touch_3.png" alt="Touchdown Plot"  width="600" />
     </p>
 
 ### Landing Rating Table
@@ -39,7 +39,7 @@ This project analyzes **Approach** and **Landing** performance from any given *f
 - Exports `.csv` of the table.
 
   <p align="left">
-    <img src="Results\[20250831] IQT-1 Checkride 1\[20250831] landing_results.png" alt="Touchdown Plot"  width="600"/>
+    <img src="Results/[20250831]%20IQT-1%20Checkride%201/[20250831]%20landing_results.png" alt="Touchdown Plot"  width="600"/>
     </p>
 
 ## 🚧 To be added
@@ -83,7 +83,7 @@ This project analyzes **Approach** and **Landing** performance from any given *f
 0. For Taview users:
   Select sampling rate (recommend 10Hz), and export your flight data telemetry as a CSV file:
     <p align="center">
-    <img src="docs\tacview_tutorial.jpg" alt="Tacview Tutorial"  width="200"/>
+    <img src="docs/tacview_tutorial.jpg" alt="Tacview Tutorial"  width="200"/>
     </p>
  1. **Prepare your data:** Place your raw CSV flight data in the `Datasets/` folder.
 2. **Configure settings:** Open `CONFIG_HERE.toml` and update parameters like `CSV_PATH` and squadron info to match your dataset.
