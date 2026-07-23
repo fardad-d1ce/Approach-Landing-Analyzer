@@ -39,7 +39,7 @@ This project analyzes **Approach** and **Landing** performance from any given *f
 - Exports `.csv` of the table.
 
   <p align="left">
-    <img src="Results/%5B20250831%5D%20IQT-1%20Checkride%201/%5B20250831%5D%20landing_results.png" alt="Touchdown Plot"  width="600"/>
+    <img src="Results/%5B20250831%5D%20IQT-1%20Checkride%201/%5B20250831%5D%20landing_results.png" alt="Touchdown Plot"  width="800"/>
     </p>
 
 ## 🚧 To be added
