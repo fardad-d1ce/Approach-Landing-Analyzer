@@ -83,7 +83,7 @@ This project analyzes **Approach** and **Landing** performance from any given *f
 0. For Taview users:
   Select sampling rate (recommend 10Hz), and export your flight data telemetry as a CSV file:
     <p align="center">
-    <img src="docs/tacview_tutorial.jpg" alt="Tacview Tutorial"  width="200"/>
+    <img src="docs/tacview_tutorial.jpg" alt="Tacview Tutorial"  width="400"/>
     </p>
  1. **Prepare your data:** Place your raw CSV flight data in the `Datasets/` folder.
 2. **Configure settings:** Open `CONFIG_HERE.toml` and update parameters like `CSV_PATH` and squadron info to match your dataset.
