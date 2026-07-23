@@ -17,7 +17,7 @@ This project analyzes **Approach** and **Landing** performance from any given *f
 
 
     <p align="left">
-    <img src="[Results/[20250831] IQT-1 Checkride 1/20250831_( 404C ) Phoenix_landing_3.png](https://github.com/fardad-d1ce/Approach-Landing-Analyzer/blob/main/Results/%5B20250831%5D%20IQT-1%20Checkride%201/20250831_(%20404C%20)%20Phoenix_landing_3.png)" width="600"/>
+    <img src="https://github.com/fardad-d1ce/Approach-Landing-Analyzer/blob/main/Results/%5B20250831%5D%20IQT-1%20Checkride%201/20250831_(%20404C%20)%20Phoenix_landing_3.png" width="600"/>
     </p>
 
 
