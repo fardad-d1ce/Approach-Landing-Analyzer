@@ -50,15 +50,6 @@ This project analyzes **Approach** and **Landing** performance from any given *f
     <img src="Results/%5B20250831%5D%20IQT-1%20Checkride%201/%5B20250831%5D%20landing_results.png" alt="Touchdown Plot"  width="800"/>
     </p>
 
-## 🚧 To be added
-- **Runways DB**: A more structured database of runway information, including runway threshold coordinates.
-- **Better Aesthetics**: Improved visualizations for  presentation.
-- **Landing Rating Criteria**: Customizable criteria for rating the landing performance.
-  - Impact **G-force**.
-  - $\delta$: Landing gear stroke (gear compression distance when the gear absorbs the impact).
-  - **Impact Time**: Time interval when gears are compressed until stabilization.
-- **User Interface**: A user-friendly GUI for easy interaction with the analysis tools.
-
 ## 🗂️ Project Structure
 
 - `Datasets/`: Raw CSV data.
@@ -108,9 +99,19 @@ This project analyzes **Approach** and **Landing** performance from any given *f
 4. **View results:** Check the `Results/` folder for the analysis outputs and landing rating tables.
 5. **Deep dive:** Explore the `Detailed Touchdowns/` folder for detailed plots of each touchdown/impact.
 
+## 🚧 To be added
+- **Runways DB**: A more structured database of runways db, including *threshold coordinates*.
+- **Improved Visualization**
+- **Landing Rating Criteria**: Customizable criteria for rating the landing performance.
+  - Impact **G-force**.
+  - $\delta$: Landing gear stroke (*gear compression distance when the gear absorbs the impact*).
+  - **Impact Time**: Time interval when gears are compressed until stabilization.
+- **UI**: A GUI for easy interaction with the analysis tools.
+- **Discord Bot**: A Discord bot for analysis export.
+
 ## 📑 Flight Data Telemetry
 
-This project is optimized for *[Tacview](https://www.tacview.net)* export files, although it can still be used on any flight telemetry data allowing the following schema:
+Although the project is optimized for *[Tacview](https://www.tacview.net)* export files, it can still be used for any flight telemetry data respecting the following schema:
 
 | Feature   | Type      | Description   | Notes |
 |-|-|-|-|
