@@ -1,6 +1,4 @@
-import os
 import tomllib
-import json
 from pathlib import Path
 
 from src.data_loaders import read_telemetry_csv, load_runway_db
@@ -11,14 +9,21 @@ from src.transformer_plotter import (transform_telemetry,
                                     plot_landing_profile,
                                     touchdown_plotter)
 
-# Load the configuration file
-config_path = Path("CONFIG_HERE.toml")
+# Load the configuration file relative to this script so the entrypoint works
+# whether it is launched from the repo root or from the backend folder.
+config_path = Path(__file__).with_name("config.toml")
 with config_path.open('rb') as f:
     config = tomllib.load(f)
 
-CSV_PATH            = Path(config['input']['CSV_PATH'])
-THRESHOLDS_DB_PATH  = config["db_path"]["THRESHOLDS_DB_PATH"]
-RESULTS_DIR         = Path(config["output"]["RESULTS_DIR"])
+PROJECT_ROOT = config_path.parent.parent
+
+def resolve_project_path(value: str) -> Path:
+    path = Path(value)
+    return path if path.is_absolute() else PROJECT_ROOT / path
+
+CSV_PATH            = resolve_project_path(config['input']['CSV_PATH'])
+THRESHOLDS_DB_PATH  = resolve_project_path(config["db_path"]["THRESHOLDS_DB_PATH"])
+RESULTS_DIR         = resolve_project_path(config["output"]["RESULTS_DIR"])
 
 def main():
 

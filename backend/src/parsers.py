@@ -2,8 +2,8 @@ import re
 import tomllib
 from pathlib import Path
 
-# Load the configuration file
-config_path = Path(__file__).parent.parent / "CONFIG_HERE.toml"
+# Load the configuration file from the backend root.
+config_path = Path(__file__).parent.parent / "config.toml"
 with config_path.open('rb') as f:
     config = tomllib.load(f)
 

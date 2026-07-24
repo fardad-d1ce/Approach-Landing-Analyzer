@@ -22,15 +22,21 @@ from src.parsers import (replace_angles,
                         format_seconds)
 
 
-# Load the configuration file
-config_path = Path(__file__).parent.parent / "CONFIG_HERE.toml"
+# Load the configuration file from the backend root.
+config_path = Path(__file__).parent.parent / "config.toml"
 with config_path.open('rb') as f:
     config = tomllib.load(f)
-CSV_PATH        = Path(config["input"]["CSV_PATH"])
+PROJECT_ROOT    = config_path.parent.parent
+
+def resolve_project_path(value: str) -> Path:
+    path = Path(value)
+    return path if path.is_absolute() else PROJECT_ROOT / path
+
+CSV_PATH        = resolve_project_path(config["input"]["CSV_PATH"])
 sampling_rate   = config["input"]["SAMPLING_RATE"]
 selected_pilots = config["squadron"]["SELECTED_PILOTS"]
 YOUR_SQUADRON   = config["squadron"]["NAME"]
-RESULTS_DIR     = Path(config["output"]["RESULTS_DIR"])
+RESULTS_DIR     = resolve_project_path(config["output"]["RESULTS_DIR"])
 
 ####################################################
 # Descent Quality Labels & Colormaps
