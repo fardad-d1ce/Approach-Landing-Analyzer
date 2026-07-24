@@ -6,7 +6,15 @@ Bonjour!
 
 This is Fardad "D1CE" Pouran, from "*404th Freelancers*"!
 
-This project analyzes **Approach** and **Landing** performance from any given *flight data telemetry* containing multiple aircraft at once (real data, DCS, MSFS, etc.) by visualizing all **Final Approach** profiles all the way to touchdown and beyond, and extracting key touchdown/impact parameters.
+This project analyzes **Approach** and **Landing** performance from any given *flight data telemetry* containing multiple aircraft at once by visualizing all **Final Approach** profiles all the way to touchdown and beyond, and extracting key touchdown/impact parameters.
+
+### Use Cases:
+- **Real-world Telemetry**: Analyze the landing performance of real-world aircraft in flight.
+- **Flight Sims**: Analyze the landing performance of aircraft in a simulation environment, e.g.
+  - Pilot Training Sims
+  - DCS World 
+  - Falcon BMS
+  - MSFS
 
 ⚠️ **Note**: The dataset included for exhibition is exported from a [Tacview](https://www.tacview.net) file on a flight data flown by 404th community. The dataset is filtered to only two pilots to reduce the file size.
 
@@ -43,6 +51,7 @@ This project analyzes **Approach** and **Landing** performance from any given *f
     </p>
 
 ## 🚧 To be added
+- **Runways DB**: A more structured database of runway information, including runway threshold coordinates.
 - **Better Aesthetics**: Improved visualizations for  presentation.
 - **Landing Rating Criteria**: Customizable criteria for rating the landing performance.
   - Impact **G-force**.
@@ -54,6 +63,7 @@ This project analyzes **Approach** and **Landing** performance from any given *f
 
 - `Datasets/`: Raw CSV data.
 - `CONFIG_HERE.toml`: Main configuration file for analysis parameters.
+--
 - `Results/`:  Approach plots and landing ratings, etc.
 - `run_analysis.py`: Main pipeline orchestrator.
 - `Landing Rate.ipynb`: Jupyter Notebook for presentations.
