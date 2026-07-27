@@ -1,4 +1,5 @@
 import tomllib
+from datetime import date
 from pathlib import Path
 
 from src.data_loaders import read_telemetry_csv, load_runway_db
@@ -25,23 +26,26 @@ CSV_PATH            = resolve_project_path(config['input']['CSV_PATH'])
 THRESHOLDS_DB_PATH  = resolve_project_path(config["db_path"]["THRESHOLDS_DB_PATH"])
 RESULTS_DIR         = resolve_project_path(config["output"]["RESULTS_DIR"])
 
-def main():
+def main(csv_path: Path | str | None = None):
+    # Use the provided csv_path or fallback to the config default
+    active_csv_path = Path(csv_path) if csv_path else CSV_PATH
 
     # extract date and mission name
-    record_date, mission_name = extract_date_name_tacview(CSV_PATH)
+    record_date, mission_name = extract_date_name_tacview(active_csv_path)
+    if record_date is None:
+        record_date = date.today().strftime("%Y%m%d")
 
     # Make the output path
     plots_output_path = RESULTS_DIR/f"[{record_date}] {mission_name}"
     detailed_td_path = plots_output_path/"Detailed Touchdowns"
     detailed_td_path.mkdir(parents=True, exist_ok=True)
 
-
     # 1. Load DB
     runway_db = load_runway_db(THRESHOLDS_DB_PATH)
 
     # 2. Touchdown Discovery
     # Read the telemetry data
-    df = read_telemetry_csv(CSV_PATH)
+    df = read_telemetry_csv(active_csv_path)
     # clean and transform the data
     df_sub = transform_telemetry(df)
     # Discover the touch downs

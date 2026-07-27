@@ -23,21 +23,23 @@ def replace_angles(text):
 def extract_date_name_tacview(path: Path):
     """
     Extracts the date and mission name from a Tacview filename.
-    Returns None, None if the filename does not match the expected format.
+    Returns a fallback tuple if the filename does not match the expected format.
     Example filename: "Tacview-20230801-123456-789012-DCS-Host-mission_name.zip"
     Returns: ("20230801", "mission name")
     """
     TACVIEW_PATTERN = r"Tacview-(\d{8})-\d+-[^-]+-(?:Host|Client)-(.*)"
     extracted_filename = path.stem
     match = re.search(TACVIEW_PATTERN, extracted_filename)
-    try:
-        if match:
+    if match:
+        try:
             extracted_date = match.group(1)
             extracted_mission_name = match.group(2)
             return extracted_date, extracted_mission_name
-    except IndexError:
-        print(f"Filename {extracted_filename} does not match the expected format.")
-        return None, None
+        except IndexError:
+            pass
+            
+    print(f"Filename '{extracted_filename}' does not match the expected Tacview format. Using fallback names.")
+    return None, extracted_filename
 
 def format_seconds(seconds: float, pos=None) -> str:
     '''Converts seconds into HH:MM:SS format for time axis.'''

@@ -1,5 +1,5 @@
 [input]
-CSV_PATH = "data/raw/Reduced_Tacview-20250831-211257-DCS-Client-IQT-1 Checkride 1.csv"
+CSV_PATH = "data/raw/simple_sample.csv"
 SAMPLING_RATE = 10 # Hz: per second
 # in Tacview: sampling rate can be controlled when exporting.
 

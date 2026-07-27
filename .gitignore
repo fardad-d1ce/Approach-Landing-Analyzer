@@ -1,5 +1,5 @@
 # =========================
-# Project-Specific Ignores
+# Backend / Python Ignores
 # =========================
 
 # Raw datasets
@@ -16,6 +16,21 @@ data/results/*
 
 # Old files
 backend/notebooks/Landing Rate_old.ipynb
+
+# =========================
+# Frontend / Node.js Ignores
+# =========================
+node_modules/
+dist/
+dist-ssr/
+coverage/
+.eslintcache
+*.local
+
+# Logs
+logs
+*.log
+npm-debug.log*
 
 # =========================
 # Python / Environment
@@ -38,7 +53,12 @@ __pycache__/
 # IDEs / Editors
 # =========================
 .vscode/
+!.vscode/extensions.json
 .idea/
 .trae/
 *.swp
 .DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
