@@ -365,7 +365,8 @@ def plot_landing_profile(   df_sub:     pd.DataFrame,
     '''
     Integrate and Visualize the whole approach and landing profile.
     '''
-
+    is_sortie = True # Default is a sortie, unless otherwise
+    
     # Break if current touchdown is less than 6 second from the previous one
     current_touchdown  = df_result.loc[
                             (   (df_result['Pilot'] == pilot) & 
@@ -386,7 +387,8 @@ def plot_landing_profile(   df_sub:     pd.DataFrame,
     if not current_touchdown.empty and not previous_touchdown.empty:
         if current_touchdown.iloc[0] - previous_touchdown.iloc[0] < 6:
             print(f'Sortie #{sortie_num} of {pilot} Took less than 6 second!')
-            return
+            is_sortie = False
+            return is_sortie
             
     ############################################################
     # Form the full landing profile DataFrame
@@ -596,6 +598,7 @@ def plot_landing_profile(   df_sub:     pd.DataFrame,
                 dpi=300, 
                 bbox_inches='tight'
     )
+    return is_sortie
 
 def touchdown_plotter(  df_sub      : pd.DataFrame,
                         df_result   : pd.DataFrame,
@@ -803,6 +806,36 @@ def style_result_table( df_result : pd.DataFrame,
     #                     }
     
     # CSS Style for Result Table
+    base_styles = [
+        # Table layout and spacing
+        {'selector': 'table', 'props': [
+            ('border-collapse', 'collapse'),
+            ('font-family', 'sans-serif'),
+            ('width', '100%'),
+            ('margin-top', '10px')
+        ]},
+        # Cell padding and vertical alignment
+        {'selector': 'th, td', 'props': [
+            ('padding', '10px 12px'),
+            ('text-align', 'left'),
+            ('border', 'none'),
+            ('vertical-align', 'middle')
+        ]},
+        # Header styling
+        {'selector': 'th', 'props': [
+            ('background-color', '#e0e0e0'),
+            ('font-weight', 'bold'),
+            ('color', '#000000')
+        ]},
+        # Caption styling
+        {'selector': 'caption', 'props': [
+            ('text-align', 'left'),
+            ('font-size', '24px'),
+            ('font-weight', 'bold'),
+            ('margin-bottom', '12px'),
+            ('color', '#000000')
+        ]}
+    ]
     styles_caption =    [   dict  ( selector='caption',
                                     props=  [("text-align", "left"),
                                             ("font-size", "150%"),
@@ -829,7 +862,8 @@ def style_result_table( df_result : pd.DataFrame,
     ).astype(int)
     df_display = df_result.drop(columns=[   'td_timestamp_seconds', 'AGL_ft',
                                             'vert_Acc_fpm2', 'vert_Jerk_fpm3',
-                                            'descent_quality', 
+                                            'descent_quality',
+                                            'td_latitude', 'td_longitude',
                                             'rwy_threshold_lat', 'rwy_threshold_long'])                                   
     # Drop Timezone
     df_display['td_timestamp'] = df_display['td_timestamp'].dt.tz_localize(None)
@@ -837,7 +871,9 @@ def style_result_table( df_result : pd.DataFrame,
     df_display['VS_fpm'] = df_display['VS_fpm'].astype(int)
 
     styles_display = df_display.style.set_caption("All Touchdowns Result").\
-                            set_table_styles(styles_caption+style_table). \
+                            set_table_styles(base_styles + 
+                                            styles_caption + 
+                                            style_table). \
                             background_gradient(cmap='RdYlGn', 
                                                 gmap= df_display['VS_fpm'],
                                                 vmin= -450,
@@ -855,7 +891,7 @@ def style_result_table( df_result : pd.DataFrame,
     styles_display.to_excel(excel_output_path, 
                             engine='openpyxl', 
                             index=False)
-    print(f"Exported styled Excel to {excel_output_path}")
+    print(f"Exported styled Excel.")
 
     # Exports to csv, html, png
     # df_result.drop(columns=['td_timestamp_seconds']).to_csv(
@@ -863,12 +899,14 @@ def style_result_table( df_result : pd.DataFrame,
     #                                 index=False)
     styles_display.to_html(
                         output_path / f'[{record_date}] landing_results.html', 
+                        doctype_html=True,
                         index=False)
+    print(f"Exported styled HTML.")
     # Export the styler directly to a PNG image
     import dataframe_image as dfi
     image_path = output_path / f'[{record_date}] landing_results.png'
     dfi.export(styles_display, image_path, max_rows=-1, table_conversion="matplotlib")
 
-    print(f"Exported table image to {image_path}")
+    print(f"Exported table image.")
 
     return styles_display

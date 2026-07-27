@@ -19,6 +19,10 @@ This project analyzes **Approach** and **Landing** performance from any given *f
 ⚠️ **Note**: The dataset included for exhibition is exported from a [Tacview](https://www.tacview.net) file on a flight data flown by 404th community. The dataset is filtered to only two pilots to reduce the file size.
 
 ## 🎯 Features
+### 🌐 Web Interface (New!):
+- A fully integrated **Vue.js frontend** and **FastAPI backend**.
+- Easily upload flight data and view generated analysis, graphs, and tables instantly in your browser!
+
 ### 📉 Approach Analysis: 
 -   Visualizes **final approach glideslope** for each aircraft. Each descent segment is rated by a color.
   - Also identifies if the aircraft bounces upon touchdown!
@@ -52,8 +56,8 @@ This project analyzes **Approach** and **Landing** performance from any given *f
 
 ## 🗂️ Project Structure
 
-- `backend/`: Python backend code, config, notebooks, and dependency files.
-- `frontend/`: Reserved for the future Vue.js frontend application.
+- `backend/`: Python backend code (FastAPI), config, notebooks, and dependency files.
+- `frontend/`: Vue.js frontend application providing the interactive UI.
 - `data/raw/`: Raw CSV telemetry data.
 - `data/results/`: Generated plots, HTML exports, and landing ratings.
 - `backend/config.toml`: Main configuration file for analysis parameters.
@@ -63,8 +67,10 @@ This project analyzes **Approach** and **Landing** performance from any given *f
 ## 🖥️ Installation
 
 ### Prerequisites
-- **Python 3.13+**
-- **[uv](https://docs.astral.sh/uv/)** (Fast Python package and project manager)
+- **[Python 3.13](https://www.python.org/downloads/)+** (for backend)
+ - **[uv](https://docs.astral.sh/uv/)** (Fast Python package and project manager)
+- **[Node.js](https://nodejs.org/en/download/)** (for frontend)
+- **[npm](https://www.npmjs.com/)** (Node.js package and dependency manager)
 
 ### Setup Instructions
 
@@ -82,6 +88,13 @@ This project analyzes **Approach** and **Landing** performance from any given *f
    ```
    *(If you don't have `uv` installed, see the [official installation guide](https://docs.astral.sh/uv/getting-started/installation/)).*
 
+3. **Install frontend dependencies:**
+   Ensure you have Node.js installed, then run:
+   ```bash
+   cd ../frontend
+   npm install
+   ```
+
 ## 📖 User Guide
 0. For Taview users:
   Select sampling rate (recommend 10Hz), and export your flight data telemetry as a CSV file:
@@ -90,26 +103,39 @@ This project analyzes **Approach** and **Landing** performance from any given *f
     </p>
  1. **Prepare your data:** Place your raw CSV flight data in the `data/raw/` folder.
 2. **Configure settings:** Open `backend/config.toml` and update parameters like `CSV_PATH` and squadron info to match your dataset.
-3. **Run the analysis:** You have two options to execute the pipeline:
-   - **Option A: Main Orchestrator (Preferred)**  
+3. **Run the analysis:** You have three options to execute the pipeline:
+   - **Option A: Web Interface (Recommended)**
+     Launch the backend API:
+     ```bash
+     cd backend
+     uv run uvicorn api:app --reload
+     ```
+     In a new terminal, launch the frontend UI:
+     ```bash
+     cd frontend
+     npm run dev
+     ```
+     Then, open the provided localhost URL (usually `http://localhost:5173`) in your browser to upload and analyze your files via the UI.
+
+   - **Option B: Main Orchestrator (CLI)**  
      Run the Python script directly using `uv`:
      ```bash
      cd backend
      uv run run_analysis.py
      ```
-   - **Option B: Jupyter Notebook (Interactive)**  
+   - **Option C: Jupyter Notebook (Interactive)**  
      Open `backend/notebooks/Landing Rate.ipynb` in your preferred IDE (select the `.venv` Python kernel) or run `uv run jupyter lab` from `backend/` to walk through the analysis step-by-step for presentations.
 4. **View results:** Check the `data/results/` folder for the analysis outputs and landing rating tables.
 5. **Deep dive:** Explore the `data/results/.../Detailed Touchdowns/` folder for detailed plots of each touchdown/impact.
 
-## 🚧 To be added
+## 🚧 Future Features
+- **Improved UI**
 - **Runways DB**: A more structured database of runways db, including *threshold coordinates*.
 - **Improved Visualization**
 - **Landing Rating Criteria**: Customizable criteria for rating the landing performance.
   - Impact **G-force**.
   - $\delta$: Landing gear stroke (*gear compression distance when the gear absorbs the impact*).
   - **Impact Time**: Time interval when gears are compressed until stabilization.
-- **UI**: A GUI for easy interaction with the analysis tools.
 - **Discord Bot**: A Discord bot for analysis export.
 
 ## 📑 Flight Data Telemetry

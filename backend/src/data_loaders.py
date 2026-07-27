@@ -37,10 +37,12 @@ def read_telemetry_csv(file_path: str | Path) -> pd.DataFrame:
 
     return df
 
-def load_runway_db(db_path: str):
+def load_runway_db(db_path: Path | str):
     '''Loads the runway threshold database from a JSON file.'''
     
     db_path = Path(db_path)
+    if not db_path.exists():
+        raise FileNotFoundError(f"Runway DB file not found: {db_path}")
 
     with db_path.open("r", encoding="utf-8") as f:
         runway_db = json.load(f)

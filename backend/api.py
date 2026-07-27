@@ -1,6 +1,9 @@
-from fastapi import FastAPI, UploadFile, File
+from urllib.parse import quote
+
+from fastapi import FastAPI, HTTPException, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
-from run_analysis import main as run_pipeline
+from fastapi.staticfiles import StaticFiles
+from run_analysis import RESULTS_DIR, main as run_pipeline
 import shutil
 import tempfile
 from pathlib import Path
@@ -10,12 +13,19 @@ app = FastAPI(title="Landing Analyzer API")
 # This allows your Vue frontend (running on port 5173) to talk to this Python API
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"], # Allows Vue frontend to talk to this API
-    # allow_origins=["*"], # Allows all origins for local development
+    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+RESULTS_ROOT = Path(RESULTS_DIR)
+app.mount("/results", StaticFiles(directory=RESULTS_ROOT), name="results")
+
+
+def build_results_url(folder_name: str, filename: str) -> str:
+    relative_path = f"{folder_name}/{filename}"
+    return f"/results/{quote(relative_path, safe='/')}"
 
 @app.get("/")
 def health_check():
@@ -30,10 +40,28 @@ def trigger_analysis(file: UploadFile = File(None)):
                 with temp_path.open("wb") as buffer:
                     shutil.copyfileobj(file.file, buffer)
                 
-                run_pipeline(csv_path=temp_path)
-            return {"status": "success", "message": f"Analysis of {file.filename} completed successfully."}
+                result_dir, manifest_data = run_pipeline(csv_path=temp_path)
         else:
-            run_pipeline()
-            return {"status": "success", "message": "Analysis of default CSV completed successfully."}
+            result_dir, manifest_data = run_pipeline()
+
+        # Build final manifest with URLs for the frontend
+        folder_name = manifest_data["folder_name"]
+        
+        for chart in manifest_data["landing_charts"]:
+            chart["url"] = build_results_url(folder_name, chart["filename"])
+            
+        final_manifest = {
+            "folder_name": folder_name,
+            "folder_url": f"/results/{quote(folder_name)}",
+            "evaluation_table_html_url": build_results_url(folder_name, manifest_data["evaluation_table_html"]),
+            "evaluation_table_image_url": build_results_url(folder_name, manifest_data["evaluation_table_image"]),
+            "landing_charts": manifest_data["landing_charts"],
+        }
+
+        return {
+            "status": "success",
+            "message": f"Analysis completed successfully.",
+            "results": final_manifest,
+        }
     except Exception as e:
-        return {"status": "error", "message": str(e)}
+        raise HTTPException(status_code=500, detail=str(e)) from e

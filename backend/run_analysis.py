@@ -3,7 +3,7 @@ from datetime import date
 from pathlib import Path
 
 from src.data_loaders import read_telemetry_csv, load_runway_db
-from src.parsers import extract_date_name_tacview
+from src.parsers import extract_date_name_tacview, replace_angles
 from src.transformer_plotter import (transform_telemetry, 
                                     touchdown_discovery,
                                     style_result_table,
@@ -29,6 +29,8 @@ RESULTS_DIR         = resolve_project_path(config["output"]["RESULTS_DIR"])
 def main(csv_path: Path | str | None = None):
     # Use the provided csv_path or fallback to the config default
     active_csv_path = Path(csv_path) if csv_path else CSV_PATH
+    if not active_csv_path.exists():
+        raise FileNotFoundError(f"CSV file not found: {active_csv_path}")
 
     # extract date and mission name
     record_date, mission_name = extract_date_name_tacview(active_csv_path)
@@ -56,13 +58,36 @@ def main(csv_path: Path | str | None = None):
 
     # 4. Plot Approach Profiles
     # 5. Detailed Touchdowns (optional)
-    for pilot in df_result['Pilot'].unique():
+    landing_charts = []
+    for pilot in df_result['Pilot'].sort_values().unique():
         for sortie_num in df_result[df_result['Pilot'] == pilot]['sortie_num'].unique():
-            plot_landing_profile(   df_sub, df_result, pilot, sortie_num, 
-                                    plots_output_path, record_date)
+            is_sortie = plot_landing_profile(   df_sub, df_result, pilot, sortie_num, 
+                                    plots_output_path, record_date)            
             # optional:
             touchdown_plotter(  df_sub, df_result, pilot, sortie_num, 
                                 detailed_td_path, record_date)
+            if not is_sortie:
+                continue
+            
+            # Record the generated chart for the manifest
+            safe_pilot = replace_angles(pilot)
+            chart_filename = f"{record_date}_{safe_pilot}_landing_{sortie_num}.png"
+            landing_charts.append({
+                "name": chart_filename,
+                "title": f"{pilot} - Landing {sortie_num}",
+                "pilot": pilot,
+                "sortie": int(sortie_num),
+                "filename": chart_filename
+            })
+
+    manifest = {
+        "folder_name": plots_output_path.name,
+        "evaluation_table_html": f"[{record_date}] landing_results.html",
+        "evaluation_table_image": f"[{record_date}] landing_results.png",
+        "landing_charts": landing_charts
+    }
+
+    return plots_output_path, manifest
 
 
 if __name__ == "__main__":
