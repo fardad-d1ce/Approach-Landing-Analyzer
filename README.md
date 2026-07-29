@@ -1,4 +1,4 @@
-![Python](https://img.shields.io/badge/python-3.13+-blue.svg) ![Status](https://img.shields.io/badge/status-active-success.svg)
+![Python](https://img.shields.io/badge/Python-3.13+-blue.svg) ![Static Badge](https://img.shields.io/badge/Vue.js-3.5.40-%234FC08D?style=flat&logo=Vue.js&logoColor=%234FC08D) ![Status](https://img.shields.io/badge/status-active-success.svg)
 
 # ✈️ Landing Rate Analysis  
 
@@ -20,14 +20,15 @@ This project analyzes **Approach** and **Landing** performance from any given *f
 
 ## 🎯 Features
 ### 🌐 Web Interface (New!):
-- A fully integrated **Vue.js frontend** and **FastAPI backend**.
+- Fully integrated **Vue.js frontend** and **FastAPI backend**.
 - Easily upload flight data and view generated analysis, graphs, and tables instantly in your browser!
+- **Results Metadata**: Backend caching allows instant displaying of the analysis on UI.
 
 ### 📉 Approach Analysis: 
+- Utilizing **[OurAirports](https://ourairports.com/data/)** Open database of runways, including *threshold coordinates*.
+- Detects the runway for each landing.
 -   Visualizes **final approach glideslope** for each aircraft. Each descent segment is rated by a color.
   - Also identifies if the aircraft bounces upon touchdown!
-
-
     <p align="left">
     <img src="data/results/%5B20250831%5D%20IQT-1%20Checkride%201/20250831_%28%20404C%20%29%20Phoenix_landing_3.png" width="600"/>
     </p>
@@ -48,10 +49,10 @@ This project analyzes **Approach** and **Landing** performance from any given *f
 
 ### Landing Rating Table
 - CSS stylized landing table for each aircraft and each sortie.
-- Exports `.csv` of the table.
+- Clean and interactive HTML export 
 
   <p align="left">
-    <img src="data/results/%5B20250831%5D%20IQT-1%20Checkride%201/%5B20250831%5D%20landing_results.png" alt="Touchdown Plot"  width="800"/>
+    <img src="data/results/%5B20250831%5D%20IQT-1%20Checkride%201/%5B20250831%5D%20landing_results.png" alt="Landing Rating Table"  width="800"/>
     </p>
 
 ## 🗂️ Project Structure
@@ -129,9 +130,7 @@ This project analyzes **Approach** and **Landing** performance from any given *f
 5. **Deep dive:** Explore the `data/results/.../Detailed Touchdowns/` folder for detailed plots of each touchdown/impact.
 
 ## 🚧 Future Features
-- **Improved UI**
-- **Runways DB**: A more structured database of runways db, including *threshold coordinates*.
-- **Improved Visualization**
+- **Improved UI** and **Graphics**
 - **Landing Rating Criteria**: Customizable criteria for rating the landing performance.
   - Impact **G-force**.
   - $\delta$: Landing gear stroke (*gear compression distance when the gear absorbs the impact*).

@@ -1,3 +1,4 @@
+import json
 import tomllib
 from datetime import date
 from pathlib import Path
@@ -73,11 +74,10 @@ def main(csv_path: Path | str | None = None):
             safe_pilot = replace_angles(pilot)
             chart_filename = f"{record_date}_{safe_pilot}_landing_{sortie_num}.png"
             landing_charts.append({
-                "name": chart_filename,
+                "filename": chart_filename,
                 "title": f"{pilot} - Landing {sortie_num}",
                 "pilot": pilot,
-                "sortie": int(sortie_num),
-                "filename": chart_filename
+                "sortie": int(sortie_num)
             })
 
     manifest = {
@@ -87,7 +87,15 @@ def main(csv_path: Path | str | None = None):
         "landing_charts": landing_charts
     }
 
-    return plots_output_path, manifest
+    # Save manifest to the specific run folder
+    with (plots_output_path / "manifest.json").open("w", encoding="utf-8") as f:
+        json.dump(manifest, f, indent=4)
+
+    # Update the global latest manifest for quick UI testing
+    with (RESULTS_DIR / "latest_manifest.json").open("w", encoding="utf-8") as f:
+        json.dump(manifest, f, indent=4)
+
+    return manifest
 
 
 if __name__ == "__main__":

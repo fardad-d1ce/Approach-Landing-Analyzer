@@ -225,7 +225,11 @@ def touchdown_discovery(df_sub: pd.DataFrame, runway_db: pd.DataFrame) -> pd.Dat
     df_result.insert(0, 'real_sortie_num', 
                         is_new_sortie.groupby( df_result['Pilot'] ).cumsum()
                     )
-
+    
+    # Drop Timezone & format columns
+    df_result['td_timestamp'] = df_result['td_timestamp'].dt.tz_localize(None)
+    df_result['CAS_kt'] = df_result['CAS_kt'].astype(int)
+    df_result['VS_fpm'] = df_result['VS_fpm'].astype(int)
     
     # ------ Runway Detection ------
     rwy_matches = df_result.apply(
@@ -606,6 +610,7 @@ def plot_landing_profile(   df_sub:     pd.DataFrame,
                 dpi=300, 
                 bbox_inches='tight'
     )
+    plt.close(fig) # Prevent memory leak warning
     return is_sortie
 
 def touchdown_plotter(  df_sub      : pd.DataFrame,
@@ -800,6 +805,7 @@ def touchdown_plotter(  df_sub      : pd.DataFrame,
                             ), 
                 dpi=300, bbox_inches='tight'
                 )
+    plt.close(fig) # Prevent memory leak warning
 
 def style_result_table( df_result : pd.DataFrame,
                         output_path : Path,
@@ -807,36 +813,43 @@ def style_result_table( df_result : pd.DataFrame,
     '''
     Stylizes & Exports the result table.
     '''
-    # # Stylizing the Result Table
-    # display_formatter = {'vert_Jerk_fpm3': '{:.2e}',
-    #                     'CAS_kt': '{:.0f}',
-    #                     'VS_fpm': '{:.0f}',
-    #                     }
-    
-    # CSS Style for Result Table
     base_styles = [
         # Table layout and spacing
-        {'selector': 'table', 'props': [
-            ('border-collapse', 'collapse'),
-            ('font-family', 'sans-serif'),
+        {'selector': '', 'props': [
+            ('border-collapse', 'collapse !important'),
+            ('border-spacing', '0 !important'),
+            ('font-family', '"Segoe UI", Tahoma, sans-serif'),
+            ('font-size', '14px !important'),
             ('width', '100%'),
             ('margin-top', '10px')
         ]},
         # Cell padding and vertical alignment
         {'selector': 'th, td', 'props': [
-            ('padding', '10px 12px'),
+            ('padding', '8px 12px'),
             ('text-align', 'left'),
-            ('border', 'none'),
+            ('border', '0.1px solid #747874 !important'),
             ('vertical-align', 'middle')
         ]},
         # Header styling
-        {'selector': 'th', 'props': [
-            ('background-color', '#e0e0e0'),
+        {'selector': 'th', 
+        'props': [
+            ('background-color', '#f1f5f9'),
             ('font-weight', 'bold'),
-            ('color', '#000000')
+            ('color', '#1e293b'),
+            ('border-bottom', '1px solid #2a2b2a'),
+            ('text-align', 'left !important'),
+            ('vertical-align', 'top !important')
+        ]},
+        # First column narrow width
+        {'selector': 'th:nth-child(1), td:nth-child(1)', 
+        'props': [
+            ('width', '60px'),
+            ('min-width', '60px'),
+            ('max-width', '60px')
         ]},
         # Caption styling
-        {'selector': 'caption', 'props': [
+        {'selector': 'caption', 
+        'props': [
             ('text-align', 'left'),
             ('font-size', '24px'),
             ('font-weight', 'bold'),
@@ -844,71 +857,60 @@ def style_result_table( df_result : pd.DataFrame,
             ('color', '#000000')
         ]}
     ]
-    styles_caption =    [   dict  ( selector='caption',
-                                    props=  [("text-align", "left"),
-                                            ("font-size", "150%"),
-                                            ("color", 'Black'),
-                                            ("font-weight", "bold")  
-                                            ]
-                                    )
-                        ]
-    # style_table =   [dict  (selector="tbody tr:nth-child(even)",
-    #                         props=  [("background-color","#F5F5F5")]    )
-    #                 ] + \
-    style_table = [dict 
-            (selector="table",
-            props = 'font-family: "Segoe UI", Tahoma, sans-serif; color: #e83e8c; font-size:1.3em;'    
-            )
-            ]
 
     # display table
-    df_display = df_result.drop(columns=[   'td_timestamp_seconds', 'AGL_ft',
+    df_display = df_result.drop(columns=[   'sortie_num',
+                                            'td_timestamp_seconds', 'AGL_ft',
                                             'vert_Acc_fpm2', 'vert_Jerk_fpm3',
                                             'descent_quality',
                                             'td_latitude', 'td_longitude',
-                                            'rwy_threshold_lat', 'rwy_threshold_long'])                                   
-    # Drop Timezone
-    df_display['td_timestamp'] = df_display['td_timestamp'].dt.tz_localize(None)
-    df_display['CAS_kt'] = df_display['CAS_kt'].astype(int)
-    df_display['VS_fpm'] = df_display['VS_fpm'].astype(int)
+                                            'rwy_threshold_lat', 'rwy_threshold_long'])
 
-    styles_display = df_display.style.set_caption("All Touchdowns Result").\
-                            set_table_styles(base_styles + 
-                                            styles_caption + 
-                                            style_table). \
+    df_display.rename(  columns={   'real_sortie_num': 'Sortie',
+                                    'td_timestamp': 'Touchdown Time',
+                                    'Name': 'Aircraft',
+                                    'CAS_kt': 'CAS (kt)',
+                                    'VS_fpm': 'VS (fpm)',
+                                    'touchdown_to_threshold_ft': 'Touchdown to Threshold (ft)'
+                                }, 
+                        inplace=True)
+
+    styles_display = df_display.style.hide(axis='index').\
+                            set_caption("All Touchdowns Result").\
+                            set_table_styles(base_styles). \
+                            set_properties(subset=['Aircraft', 'Pilot', 'Touchdown Time'], 
+                                            **{'white-space': 'nowrap'}
+                                        ). \
                             background_gradient(cmap='RdYlGn', 
-                                                gmap= df_display['VS_fpm'],
+                                                gmap= df_display['VS (fpm)'],
                                                 vmin= -450,
-                                                vmax= df_result['VS_fpm'].max(),
+                                                vmax= df_display['VS (fpm)'].max(),
                                                 low=0.3, high=0.1
                                                 ).\
-                            background_gradient(cmap='Pastel1', 
-                                                subset=['sortie_num', 'real_sortie_num'], 
+                                            background_gradient(cmap='Pastel1', 
+                                                subset=['Sortie'], 
                                                 low=0.5, high=1)
 
     # Exports
-    # Export to Excel:
-    excel_output_path = output_path / f'{record_date}_landing_results.xlsx'
+    # # Export to Excel:
+    # excel_output_path = output_path / f'{record_date}_landing_results.xlsx'
 
-    styles_display.to_excel(excel_output_path, 
-                            engine='openpyxl', 
-                            index=False)
-    print(f"Exported styled Excel.")
+    # styles_display.to_excel(excel_output_path, 
+    #                         engine='openpyxl', 
+    #                         index=False)
+    # print(f"Exported styled Excel.")
 
-    # Exports to csv, html, png
-    # df_result.drop(columns=['td_timestamp_seconds']).to_csv(
-    #                     output_path / f'{record_date}_landing_results.csv', 
-    #                                 index=False)
+    # Export to HTML
     styles_display.to_html(
                         output_path / f'[{record_date}] landing_results.html', 
                         doctype_html=True,
                         index=False)
     print(f"Exported styled HTML.")
-    # Export the styler directly to a PNG image
+    
+    # Export to PNG
     import dataframe_image as dfi
     image_path = output_path / f'[{record_date}] landing_results.png'
     dfi.export(styles_display, image_path, max_rows=-1, table_conversion="matplotlib")
-
     print(f"Exported table image.")
 
     return styles_display

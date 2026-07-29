@@ -1,0 +1,31 @@
+{
+    "folder_name": "[20250831] IQT-1 Checkride 1",
+    "evaluation_table_html": "[20250831] landing_results.html",
+    "evaluation_table_image": "[20250831] landing_results.png",
+    "landing_charts": [
+        {
+            "filename": "20250831_( 404 ) D1CE_landing_1.png",
+            "title": "< 404 > D1CE - Landing 1",
+            "pilot": "< 404 > D1CE",
+            "sortie": 1
+        },
+        {
+            "filename": "20250831_( 404C ) Phoenix_landing_1.png",
+            "title": "< 404C > Phoenix - Landing 1",
+            "pilot": "< 404C > Phoenix",
+            "sortie": 1
+        },
+        {
+            "filename": "20250831_( 404C ) Phoenix_landing_2.png",
+            "title": "< 404C > Phoenix - Landing 2",
+            "pilot": "< 404C > Phoenix",
+            "sortie": 2
+        },
+        {
+            "filename": "20250831_( 404C ) Phoenix_landing_3.png",
+            "title": "< 404C > Phoenix - Landing 3",
+            "pilot": "< 404C > Phoenix",
+            "sortie": 3
+        }
+    ]
+}

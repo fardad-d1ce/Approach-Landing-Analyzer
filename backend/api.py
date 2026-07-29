@@ -1,3 +1,4 @@
+import json
 from urllib.parse import quote
 
 from fastapi import FastAPI, HTTPException, UploadFile, File
@@ -24,8 +25,28 @@ app.mount("/results", StaticFiles(directory=RESULTS_ROOT), name="results")
 
 
 def build_results_url(folder_name: str, filename: str) -> str:
+    if not filename:
+        return ""
     relative_path = f"{folder_name}/{filename}"
     return f"/results/{quote(relative_path, safe='/')}"
+
+def enrich_manifest(manifest_data: dict) -> dict:
+    """Dynamically adds the /results/ API routing URLs to the raw manifest data."""
+    folder_name = manifest_data["folder_name"]
+    
+    landing_charts = []
+    for chart in manifest_data.get("landing_charts", []):
+        new_chart = chart.copy()
+        new_chart["url"] = build_results_url(folder_name, chart.get("filename", ""))
+        landing_charts.append(new_chart)
+        
+    return {
+        "folder_name": folder_name,
+        "folder_url": f"/results/{quote(folder_name)}",
+        "evaluation_table_html_url": build_results_url(folder_name, manifest_data.get("evaluation_table_html", "")),
+        "evaluation_table_image_url": build_results_url(folder_name, manifest_data.get("evaluation_table_image", "")),
+        "landing_charts": landing_charts,
+    }
 
 @app.get("/")
 def health_check():
@@ -40,23 +61,12 @@ def trigger_analysis(file: UploadFile = File(None)):
                 with temp_path.open("wb") as buffer:
                     shutil.copyfileobj(file.file, buffer)
                 
-                result_dir, manifest_data = run_pipeline(csv_path=temp_path)
+                manifest_data = run_pipeline(csv_path=temp_path)
         else:
-            result_dir, manifest_data = run_pipeline()
+            manifest_data = run_pipeline()
 
         # Build final manifest with URLs for the frontend
-        folder_name = manifest_data["folder_name"]
-        
-        for chart in manifest_data["landing_charts"]:
-            chart["url"] = build_results_url(folder_name, chart["filename"])
-            
-        final_manifest = {
-            "folder_name": folder_name,
-            "folder_url": f"/results/{quote(folder_name)}",
-            "evaluation_table_html_url": build_results_url(folder_name, manifest_data["evaluation_table_html"]),
-            "evaluation_table_image_url": build_results_url(folder_name, manifest_data["evaluation_table_image"]),
-            "landing_charts": manifest_data["landing_charts"],
-        }
+        final_manifest = enrich_manifest(manifest_data)
 
         return {
             "status": "success",
@@ -65,3 +75,24 @@ def trigger_analysis(file: UploadFile = File(None)):
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e)) from e
+
+@app.get("/latest")
+def get_latest_results():
+    latest_manifest_path = RESULTS_ROOT / "latest_manifest.json"
+    if not latest_manifest_path.exists():
+        raise HTTPException(status_code=404, 
+                            detail="No previous results found. Run an analysis first.")
+    
+    try:
+        with latest_manifest_path.open("r", encoding="utf-8") as f:
+            manifest_data = json.load(f)
+            
+        final_manifest = enrich_manifest(manifest_data)
+            
+        return {
+            "status": "success",
+            "message": "Loaded latest results from cache.",
+            "results": final_manifest,
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to load cache: {str(e)}")

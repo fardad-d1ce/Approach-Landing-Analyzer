@@ -35,17 +35,27 @@ def find_closest_runway(lat, lon, runway_db: pd.DataFrame) -> dict:
         
     min_idx = np.nanargmin(distances_ft)
     closest_distance_ft = distances_ft[min_idx]
-    
-    closes_airport = runway_db.iloc[min_idx]
-    closest_match = {
-        "airport": ( # icao code | iata code | name
-                        closes_airport["icao_code"] or 
-                        closes_airport["iata_code"] or 
-                        closes_airport["name"]
-        ),
-        "runway": closes_airport["runway_name"],
-        "runway_coordinates": (closes_airport["lat"], closes_airport["lon"]),
-        "distance_ft": closest_distance_ft,
+    MAX_FEASIBLE_DISTANCE_FT = 10000
+
+    if closest_distance_ft > MAX_FEASIBLE_DISTANCE_FT:
+        closest_match = {
+            "airport": None,
+            "runway": None,
+            "runway_coordinates": None,
+            "distance_ft": None,
+        }
+    else:
+        closest_airport = runway_db.iloc[min_idx]
+        closest_match = {
+            "airport": ( # icao_code or iata_code or airport_name
+                            closest_airport[["icao_code",
+                                            "iata_code",
+                                            "airport_name"]
+                                            ].dropna().iloc[0]
+            ),
+            "runway": closest_airport["runway_name"],
+            "runway_coordinates": (closest_airport["lat"], closest_airport["lon"]),
+            "distance_ft": closest_distance_ft,
     }
 
     return closest_match

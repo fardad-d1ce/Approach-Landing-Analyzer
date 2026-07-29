@@ -6,12 +6,20 @@ const API_BASE_URL = 'http://127.0.0.1:8000'
 const statusMessage = ref('')
 const isLoading = ref(false)
 const selectedFile = ref(null)
-const latestResults = ref(null)
+const analysisResults = ref(null)
 const evaluationTableHtml = ref('')
+const fileInput = ref(null)
 
 const handleFileChange = (event) => {
   const file = event.target.files[0]
   selectedFile.value = file || null
+}
+
+const removeFile = () => {
+  selectedFile.value = null
+  if (fileInput.value) {
+    fileInput.value.value = ''
+  }
 }
 
 const toApiUrl = (path) => {
@@ -41,7 +49,7 @@ const loadEvaluationTableHtml = async (results) => {
 }
 
 const applyResults = async (results) => {
-  latestResults.value = results
+  analysisResults.value = results
   await loadEvaluationTableHtml(results)
 }
 
@@ -80,6 +88,24 @@ const triggerAnalysis = async () => {
     isLoading.value = false
   }
 }
+
+const loadLatest = async () => {
+  isLoading.value = true
+  statusMessage.value = 'Loading cached results...'
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/latest`)
+    const data = await parseApiResponse(response)
+
+    await applyResults(data.results)
+    statusMessage.value = `Success: ${data.message}`
+  } catch (error) {
+    statusMessage.value = error.message || 'Failed to load latest results.'
+    console.error(error)
+  } finally {
+    isLoading.value = false
+  }
+}
 </script>
 
 <template>
@@ -99,14 +125,29 @@ const triggerAnalysis = async () => {
             accept=".csv"
             @change="handleFileChange"
             class="file-input"
+            ref="fileInput"
           />
-          <label for="csv-upload" class="file-label">
-            {{ selectedFile ? selectedFile.name : 'Upload CSV (Optional)' }}
-          </label>
+          <div class="file-label-wrapper">
+            <label for="csv-upload" class="file-label" :class="{ 'has-file': selectedFile }">
+              {{ selectedFile ? selectedFile.name : 'Upload CSV Telemetry Data' }}
+            </label>
+            <button 
+              v-if="selectedFile" 
+              @click.prevent="removeFile" 
+              class="remove-btn" 
+              title="Remove file"
+            >
+              ✕
+            </button>
+          </div>
         </div>
 
         <button @click="triggerAnalysis" :disabled="isLoading" class="action-btn">
           {{ isLoading ? 'Processing...' : (selectedFile ? 'Analyze Uploaded Data' : 'Run Analysis') }}
+        </button>
+
+        <button @click="loadLatest" :disabled="isLoading" class="action-btn secondary-btn" title="Load the last successful analysis to test UI without waiting">
+          Load Latest Run
         </button>
       </div>
 
@@ -115,18 +156,18 @@ const triggerAnalysis = async () => {
       </div>
     </section>
 
-    <section v-if="latestResults" class="results-section">
+    <section v-if="analysisResults" class="results-section">
       <div class="section-heading">
         <h2>Pilots Landing Evaluation</h2>
-        <p>{{ latestResults.folder_name }}</p>
+        <p>{{ analysisResults.folder_name }}</p>
       </div>
 
       <div v-if="evaluationTableHtml" class="table-shell">
         <div class="table-scroll" v-html="evaluationTableHtml"></div>
       </div>
-      <div v-else-if="latestResults.evaluation_table_image_url" class="fallback-image-card">
+      <div v-else-if="analysisResults.evaluation_table_image_url" class="fallback-image-card">
         <img
-          :src="toApiUrl(latestResults.evaluation_table_image_url)"
+          :src="toApiUrl(analysisResults.evaluation_table_image_url)"
           alt="Pilots landing evaluation table"
           class="result-image"
         />
@@ -134,16 +175,16 @@ const triggerAnalysis = async () => {
       <p v-else class="empty-state">No landing evaluation table was generated for this run.</p>
     </section>
 
-    <section v-if="latestResults" class="results-section">
+    <section v-if="analysisResults" class="results-section">
       <div class="section-heading">
         <h2>Pilots Landing Charts</h2>
-        <p>{{ latestResults.landing_charts.length }} chart(s)</p>
+        <p>{{ analysisResults.landing_charts.length }} chart(s)</p>
       </div>
 
-      <div v-if="latestResults.landing_charts.length" class="chart-grid">
+      <div v-if="analysisResults.landing_charts.length" class="chart-grid">
         <article
-          v-for="chart in latestResults.landing_charts"
-          :key="chart.name"
+          v-for="chart in analysisResults.landing_charts"
+          :key="chart.title"
           class="chart-card"
         >
           <img
@@ -154,7 +195,7 @@ const triggerAnalysis = async () => {
           />
           <div class="chart-meta">
             <h3>{{ chart.title }}</h3>
-            <p>{{ chart.name }}</p>
+            <!-- <p>{{ chart.filename }}</p> -->
           </div>
         </article>
       </div>
@@ -222,6 +263,13 @@ const triggerAnalysis = async () => {
   display: none;
 }
 
+.file-label-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
 .file-label {
   display: block;
   width: 100%;
@@ -233,6 +281,40 @@ const triggerAnalysis = async () => {
   cursor: pointer;
   transition: all 0.2s ease;
   font-size: 0.95rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.file-label.has-file {
+  padding-right: 3rem;
+  border-style: solid;
+  border-color: #bcccdc;
+  background: #f0f4f8;
+}
+
+.remove-btn {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: #9aa5b1;
+  font-size: 1.2rem;
+  cursor: pointer;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.remove-btn:hover {
+  color: #e25c5c;
+  background: #ffe3e3;
 }
 
 .file-label:hover {
@@ -260,6 +342,18 @@ const triggerAnalysis = async () => {
 .action-btn:disabled {
   background: #9aa5b1;
   cursor: not-allowed;
+}
+
+.secondary-btn {
+  background: #ffffff;
+  color: #102a43;
+  border: 1px solid #bcccdc;
+}
+
+.secondary-btn:hover:not(:disabled) {
+  background: #f8fbff;
+  border-color: #829ab1;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
 }
 
 .status-box {
@@ -316,8 +410,8 @@ const triggerAnalysis = async () => {
 
 .chart-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 600px), 1fr));
+  gap: 1.5rem;
 }
 
 .chart-meta h3 {
