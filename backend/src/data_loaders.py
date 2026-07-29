@@ -1,5 +1,5 @@
 from pathlib import Path
-import json
+
 import pandas as pd
 
 REQUIRED_COLUMNS = [
@@ -37,17 +37,51 @@ def read_telemetry_csv(file_path: str | Path) -> pd.DataFrame:
 
     return df
 
-def load_runway_db(db_path: Path | str):
-    '''Loads the runway threshold database from a JSON file.'''
+def load_runway_db(ref_dir: Path | str) -> pd.DataFrame:
+    '''Loads the runway threshold database from airports and runways CSV files.'''
     
-    db_path = Path(db_path)
-    if not db_path.exists():
-        raise FileNotFoundError(f"Runway DB file not found: {db_path}")
+    # Use the parent directory of the original db_path to locate the CSVs
+    ref_dir = Path(ref_dir)
+    airports_path = ref_dir / "airports.csv"
+    runways_path = ref_dir / "runways.csv"
+    
+    if not airports_path.exists():
+        raise FileNotFoundError(f"Airports DB file not found: {airports_path}")
+    if not runways_path.exists():
+        raise FileNotFoundError(f"Runways DB file not found: {runways_path}")
 
-    with db_path.open("r", encoding="utf-8") as f:
-        runway_db = json.load(f)
+    # Load dataframes with only necessary columns to save memory
+    df_airports = pd.read_csv(airports_path, usecols=['id', 'name', 'ident', 
+                                                    'iata_code', 'icao_code'])
+    df_runways = pd.read_csv(runways_path, 
+                                usecols=['airport_ref', 
+                                        'le_ident', 'le_latitude_deg', 'le_longitude_deg', 
+                                        'he_ident', 'he_latitude_deg', 'he_longitude_deg'])
 
-    if not runway_db:
-        raise ValueError(f"Runway DB is empty: {db_path}")
+    # Merge airports with runways
+    df_merged = pd.merge(df_runways, df_airports,   left_on='airport_ref', 
+                                                    right_on='id', 
+                                                    how='inner')
+
+    # Unpivot the runways so that each threshold (le and he) gets its own row
+    df_le = df_merged[['name', 'iata_code', 'icao_code', 
+                        'le_ident', 'le_latitude_deg', 'le_longitude_deg']].copy()
+    df_le.rename(columns={'le_ident': 'runway_name', 'le_latitude_deg': 'lat', 
+                            'le_longitude_deg': 'lon'}, inplace=True)
+
+    df_he = df_merged[['name', 'iata_code', 'icao_code', 
+                        'he_ident', 'he_latitude_deg', 'he_longitude_deg']].copy()
+    df_he.rename(columns={'he_ident': 'runway_name', 'he_latitude_deg': 'lat', 
+                            'he_longitude_deg': 'lon'}, inplace=True)
+
+    # Combine both ends
+    runway_db = pd.concat([df_le, df_he], ignore_index=True)
+
+    # Drop thresholds without coordinates and rename columns for consistency
+    runway_db.dropna(subset=['lat', 'lon'], inplace=True)
+    runway_db.rename(columns={'name': 'airport_name'}, inplace=True)
+
+    if runway_db.empty:
+        raise ValueError(f"Runway DB is empty after processing CSVs in {db_dir}")
 
     return runway_db

@@ -23,7 +23,7 @@ def resolve_project_path(value: str) -> Path:
     return path if path.is_absolute() else PROJECT_ROOT / path
 
 CSV_PATH            = resolve_project_path(config['input']['CSV_PATH'])
-THRESHOLDS_DB_PATH  = resolve_project_path(config["db_path"]["THRESHOLDS_DB_PATH"])
+REF_PATH             = resolve_project_path(config["db_path"]["REF_PATH"])
 RESULTS_DIR         = resolve_project_path(config["output"]["RESULTS_DIR"])
 
 def main(csv_path: Path | str | None = None):
@@ -43,7 +43,7 @@ def main(csv_path: Path | str | None = None):
     detailed_td_path.mkdir(parents=True, exist_ok=True)
 
     # 1. Load DB
-    runway_db = load_runway_db(THRESHOLDS_DB_PATH)
+    runway_db = load_runway_db(REF_PATH)
 
     # 2. Touchdown Discovery
     # Read the telemetry data

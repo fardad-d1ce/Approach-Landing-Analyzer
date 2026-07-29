@@ -15,6 +15,7 @@ data/results/*
 !data/results/\[20250831\] IQT-1 Checkride 1/**
 
 # Old files
+data/reference/thresholds_db.json
 backend/notebooks/Landing Rate_old.ipynb
 
 # =========================

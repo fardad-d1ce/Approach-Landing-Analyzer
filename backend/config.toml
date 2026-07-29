@@ -19,4 +19,4 @@ RESULTS_DIR = "data/results" # Recommend: Leave is as default
 SAVE_PLOTS = true # not implemented
 
 [db_path]
-THRESHOLDS_DB_PATH = "data/reference/thresholds_db.json" # Do NOT edit
+REF_PATH = "data/reference" # Do NOT edit

@@ -120,7 +120,7 @@ def transform_telemetry(df: pd.DataFrame) -> pd.DataFrame:
 
     return df_sub
 
-def touchdown_discovery(df_sub: pd.DataFrame, runway_db: dict) -> pd.DataFrame:
+def touchdown_discovery(df_sub: pd.DataFrame, runway_db: pd.DataFrame) -> pd.DataFrame:
     '''
     Discover the touchdown moment for each pilot from the transformed telemetry data.
     input:
@@ -226,6 +226,7 @@ def touchdown_discovery(df_sub: pd.DataFrame, runway_db: dict) -> pd.DataFrame:
                         is_new_sortie.groupby( df_result['Pilot'] ).cumsum()
                     )
 
+    
     # ------ Runway Detection ------
     rwy_matches = df_result.apply(
         lambda row: find_closest_runway(row["td_latitude"], 
@@ -235,17 +236,24 @@ def touchdown_discovery(df_sub: pd.DataFrame, runway_db: dict) -> pd.DataFrame:
     )
     rwy_matches_df = pd.DataFrame(rwy_matches.tolist(), index=df_result.index)
 
-    df_result["Airport"] = rwy_matches_df["airport_name"]
+    df_result["Airport"] = rwy_matches_df["airport"]
     df_result["Runway"] = rwy_matches_df["runway"]
     df_result["rwy_threshold_lat"] = rwy_matches_df["runway_coordinates"].str[0]
     df_result["rwy_threshold_long"] = rwy_matches_df["runway_coordinates"].str[1]
+    
+    df_result['touchdown_to_threshold_ft'] =  haversine(
+        df_result['td_latitude'].values, 
+        df_result['td_longitude'].values, 
+        df_result['rwy_threshold_lat'].values, 
+        df_result['rwy_threshold_long'].values
+    ).astype(int)
 
     return df_result
 
 def full_landing_profile_df(df_sub:     pd.DataFrame, 
                             df_result:  pd.DataFrame,
                             pilot:      str,
-                            sortie_num: int) -> tuple[pd.DataFrame, float]:
+                            sortie_num: int) -> pd.DataFrame:
     '''
     Integrate the approach data with the touchdown data.
     '''
@@ -854,12 +862,6 @@ def style_result_table( df_result : pd.DataFrame,
             ]
 
     # display table
-    df_result['touchdown_to_threshold_ft'] =  haversine(
-        df_result['td_latitude'].values, 
-        df_result['td_longitude'].values, 
-        df_result['rwy_threshold_lat'].values, 
-        df_result['rwy_threshold_long'].values
-    ).astype(int)
     df_display = df_result.drop(columns=[   'td_timestamp_seconds', 'AGL_ft',
                                             'vert_Acc_fpm2', 'vert_Jerk_fpm3',
                                             'descent_quality',
