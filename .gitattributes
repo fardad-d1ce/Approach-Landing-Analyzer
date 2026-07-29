@@ -1,2 +1,6 @@
 # Ignore Jupyter Notebooks in language statistics
 *.ipynb linguist-vendored
+
+# auto-detect text files across the project 
+# and set to use LF as EOL
+* text=auto eol=lf

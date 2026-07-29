@@ -1,21 +1,37 @@
 # =========================
-# Project-Specific Ignores
+# Backend / Python Ignores
 # =========================
 
-# Datasets
-Datasets/*
+# Raw datasets
+data/raw/*
 # Except the sample datasets
-!Datasets/Reduced_Tacview-20250831-211257-DCS-Client-IQT-1 Checkride 1.csv
-!Datasets/Tacview-20250831-211257-DCS-Client-IQT-1 Checkride 1.1 .zip.acmi
+!data/raw/Reduced_Tacview-20250831-211257-DCS-Client-IQT-1 Checkride 1.csv
+!data/raw/Tacview-20250831-211257-DCS-Client-IQT-1 Checkride 1.1 .zip.acmi
 
 # Result files
-Results/*
+data/results/*
 # Except the sample result
-!Results/\[20250831\] IQT-1 Checkride 1/
-!Results/\[20250831\] IQT-1 Checkride 1/**
+!data/results/\[20250831\] IQT-1 Checkride 1/
+!data/results/\[20250831\] IQT-1 Checkride 1/**
 
 # Old files
-Landing Rate_old.ipynb
+data/reference/thresholds_db.json
+backend/notebooks/Landing Rate_old.ipynb
+
+# =========================
+# Frontend / Node.js Ignores
+# =========================
+node_modules/
+dist/
+dist-ssr/
+coverage/
+.eslintcache
+*.local
+
+# Logs
+logs
+*.log
+npm-debug.log*
 
 # =========================
 # Python / Environment
@@ -38,7 +54,12 @@ __pycache__/
 # IDEs / Editors
 # =========================
 .vscode/
+!.vscode/extensions.json
 .idea/
 .trae/
 *.swp
 .DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln

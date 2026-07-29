@@ -1,0 +1,22 @@
+[input]
+CSV_PATH = "data/raw/Reduced_Tacview-20250831-211257-DCS-Client-IQT-1 Checkride 1.csv"
+SAMPLING_RATE = 10 # Hz: per second
+# in Tacview: sampling rate can be controlled when exporting.
+
+[squadron]
+NAME = "404th Freelancers"
+SELECTED_PILOTS = [
+            '< 404C > Dragon 5',   '< 404C > F.U.B.A.R', '< 404C > IR.shadow', 
+            '< 404C > Ghost', '< 404C > Phoenix' , '< 404C > Rough14', 
+            '< 404C > Cooper', '< 404C > Persianoid' , '< 404C > LCDR vici', 
+            '< 404 > ALPHA-WHISKEY', '< 404 > Aria', '< 404 > A D L E R',
+            '< 404 > D1CE', '< 404 > FanBoy', '< 404 > Hawk_7', '< 404 > HoneyBadger'
+            ]
+PILOT_CALLSIGN_REGEX = '<\s*404[C]?\s*>(.*)'
+
+[output]
+RESULTS_DIR = "data/results" # Recommend: Leave is as default
+SAVE_PLOTS = true # not implemented
+
+[db_path]
+REF_PATH = "data/reference" # Do NOT edit

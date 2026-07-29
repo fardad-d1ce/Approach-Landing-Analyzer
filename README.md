@@ -19,13 +19,17 @@ This project analyzes **Approach** and **Landing** performance from any given *f
 ⚠️ **Note**: The dataset included for exhibition is exported from a [Tacview](https://www.tacview.net) file on a flight data flown by 404th community. The dataset is filtered to only two pilots to reduce the file size.
 
 ## 🎯 Features
+### 🌐 Web Interface (New!):
+- A fully integrated **Vue.js frontend** and **FastAPI backend**.
+- Easily upload flight data and view generated analysis, graphs, and tables instantly in your browser!
+
 ### 📉 Approach Analysis: 
 -   Visualizes **final approach glideslope** for each aircraft. Each descent segment is rated by a color.
   - Also identifies if the aircraft bounces upon touchdown!
 
 
     <p align="left">
-    <img src="Results/%5B20250831%5D%20IQT-1%20Checkride%201/20250831_%28%20404C%20%29%20Phoenix_landing_3.png" width="600"/>
+    <img src="data/results/%5B20250831%5D%20IQT-1%20Checkride%201/20250831_%28%20404C%20%29%20Phoenix_landing_3.png" width="600"/>
     </p>
 
 
@@ -39,7 +43,7 @@ This project analyzes **Approach** and **Landing** performance from any given *f
   | **Jerk** | *fpm<sup>3</sup>* | Sudden change of impact-force/acceleration on aircraft's CG |
 
     <p align="left">
-    <img src="Results/%5B20250831%5D%20IQT-1%20Checkride%201/Detailed%20Touchdowns/20250831_%28%20404C%20%29%20Phoenix_touch_3.png" alt="Touchdown Plot"  width="600" />
+    <img src="data/results/%5B20250831%5D%20IQT-1%20Checkride%201/Detailed%20Touchdowns/20250831_%28%20404C%20%29%20Phoenix_touch_3.png" alt="Touchdown Plot"  width="600" />
     </p>
 
 ### Landing Rating Table
@@ -47,23 +51,26 @@ This project analyzes **Approach** and **Landing** performance from any given *f
 - Exports `.csv` of the table.
 
   <p align="left">
-    <img src="Results/%5B20250831%5D%20IQT-1%20Checkride%201/%5B20250831%5D%20landing_results.png" alt="Touchdown Plot"  width="800"/>
+    <img src="data/results/%5B20250831%5D%20IQT-1%20Checkride%201/%5B20250831%5D%20landing_results.png" alt="Touchdown Plot"  width="800"/>
     </p>
 
 ## 🗂️ Project Structure
 
-- `Datasets/`: Raw CSV data.
-- `CONFIG_HERE.toml`: Main configuration file for analysis parameters.
---
-- `Results/`:  Approach plots and landing ratings, etc.
-- `run_analysis.py`: Main pipeline orchestrator.
-- `Landing Rate.ipynb`: Jupyter Notebook for presentations.
+- `backend/`: Python backend code (FastAPI), config, notebooks, and dependency files.
+- `frontend/`: Vue.js frontend application providing the interactive UI.
+- `data/raw/`: Raw CSV telemetry data.
+- `data/results/`: Generated plots, HTML exports, and landing ratings.
+- `backend/config.toml`: Main configuration file for analysis parameters.
+- `backend/run_analysis.py`: Main pipeline orchestrator.
+- `backend/notebooks/Landing Rate.ipynb`: Jupyter notebook for presentations.
 
 ## 🖥️ Installation
 
 ### Prerequisites
-- **Python 3.13+**
-- **[uv](https://docs.astral.sh/uv/)** (Fast Python package and project manager)
+- **[Python 3.13](https://www.python.org/downloads/)+** (for backend)
+ - **[uv](https://docs.astral.sh/uv/)** (Fast Python package and project manager)
+- **[Node.js](https://nodejs.org/en/download/)** (for frontend)
+- **[npm](https://www.npmjs.com/)** (Node.js package and dependency manager)
 
 ### Setup Instructions
 
@@ -73,12 +80,20 @@ This project analyzes **Approach** and **Landing** performance from any given *f
    cd Landing-Rating
    ```
 
-2. **Install dependencies:**
+2. **Install backend dependencies:**
    This project uses `uv` for dependency management. To automatically create a virtual environment and install all required packages, run:
    ```bash
+   cd backend
    uv sync
    ```
    *(If you don't have `uv` installed, see the [official installation guide](https://docs.astral.sh/uv/getting-started/installation/)).*
+
+3. **Install frontend dependencies:**
+   Ensure you have Node.js installed, then run:
+   ```bash
+   cd ../frontend
+   npm install
+   ```
 
 ## 📖 User Guide
 0. For Taview users:
@@ -86,27 +101,41 @@ This project analyzes **Approach** and **Landing** performance from any given *f
     <p align="center">
     <img src="docs/tacview_tutorial.jpg" alt="Tacview Tutorial"  width="400"/>
     </p>
- 1. **Prepare your data:** Place your raw CSV flight data in the `Datasets/` folder.
-2. **Configure settings:** Open `CONFIG_HERE.toml` and update parameters like `CSV_PATH` and squadron info to match your dataset.
-3. **Run the analysis:** You have two options to execute the pipeline:
-   - **Option A: Main Orchestrator (Preferred)**  
+ 1. **Prepare your data:** Place your raw CSV flight data in the `data/raw/` folder.
+2. **Configure settings:** Open `backend/config.toml` and update parameters like `CSV_PATH` and squadron info to match your dataset.
+3. **Run the analysis:** You have three options to execute the pipeline:
+   - **Option A: Web Interface (Recommended)**
+     Launch the backend API:
+     ```bash
+     cd backend
+     uv run uvicorn api:app --reload
+     ```
+     In a new terminal, launch the frontend UI:
+     ```bash
+     cd frontend
+     npm run dev
+     ```
+     Then, open the provided localhost URL (usually `http://localhost:5173`) in your browser to upload and analyze your files via the UI.
+
+   - **Option B: Main Orchestrator (CLI)**  
      Run the Python script directly using `uv`:
      ```bash
+     cd backend
      uv run run_analysis.py
      ```
-   - **Option B: Jupyter Notebook (Interactive)**  
-     Open `Landing Rate.ipynb` in your preferred IDE (select the `.venv` Python kernel) or run `uv run jupyter lab` to run the analysis step-by-step for presentations.
-4. **View results:** Check the `Results/` folder for the analysis outputs and landing rating tables.
-5. **Deep dive:** Explore the `Detailed Touchdowns/` folder for detailed plots of each touchdown/impact.
+   - **Option C: Jupyter Notebook (Interactive)**  
+     Open `backend/notebooks/Landing Rate.ipynb` in your preferred IDE (select the `.venv` Python kernel) or run `uv run jupyter lab` from `backend/` to walk through the analysis step-by-step for presentations.
+4. **View results:** Check the `data/results/` folder for the analysis outputs and landing rating tables.
+5. **Deep dive:** Explore the `data/results/.../Detailed Touchdowns/` folder for detailed plots of each touchdown/impact.
 
-## 🚧 To be added
+## 🚧 Future Features
+- **Improved UI**
 - **Runways DB**: A more structured database of runways db, including *threshold coordinates*.
 - **Improved Visualization**
 - **Landing Rating Criteria**: Customizable criteria for rating the landing performance.
   - Impact **G-force**.
   - $\delta$: Landing gear stroke (*gear compression distance when the gear absorbs the impact*).
   - **Impact Time**: Time interval when gears are compressed until stabilization.
-- **UI**: A GUI for easy interaction with the analysis tools.
 - **Discord Bot**: A Discord bot for analysis export.
 
 ## 📑 Flight Data Telemetry
