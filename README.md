@@ -1,4 +1,4 @@
-![Python](https://img.shields.io/badge/Python-3.13+-blue.svg) ![Static Badge](https://img.shields.io/badge/Vue.js-3.5.40-%234FC08D?style=flat&logo=Vue.js&logoColor=%234FC08D) ![Status](https://img.shields.io/badge/status-active-success.svg)
+![Static Badge](https://img.shields.io/badge/Python-3.13%2B-%233776AB?style=flat&logo=Python&logoColor=%233776AB&logoSize=%233776AB) ![Static Badge](https://img.shields.io/badge/Vue.js-3.5.40-%234FC08D?style=flat&logo=Vue.js&logoColor=%234FC08D) ![Status](https://img.shields.io/badge/status-active-success.svg)
 
 # ✈️ Landing Rate Analysis  
 

@@ -50,8 +50,7 @@ def find_closest_runway(lat, lon, runway_db: pd.DataFrame) -> dict:
             "airport": ( # icao_code or iata_code or airport_name
                             closest_airport[["icao_code",
                                             "iata_code",
-                                            "airport_name"]
-                                            ].dropna().iloc[0]
+                                            "airport_name"]].dropna().iloc[0]
             ),
             "runway": closest_airport["runway_name"],
             "runway_coordinates": (closest_airport["lat"], closest_airport["lon"]),
