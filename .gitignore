@@ -63,3 +63,11 @@ __pycache__/
 *.ntvs*
 *.njsproj
 *.sln
+
+# =========================
+# AI Agent Rules
+# =========================
+# Ignore IDE-specific rule files (developers can symlink/copy AGENT.md to these locally)
+.traerules
+.cursorrules
+.windsurfrules

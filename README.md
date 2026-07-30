@@ -1,9 +1,8 @@
 ![Static Badge](https://img.shields.io/badge/Python-3.13%2B-%233776AB?style=flat&logo=Python&logoColor=%233776AB&logoSize=%233776AB) ![Static Badge](https://img.shields.io/badge/Vue.js-3.5.40-%234FC08D?style=flat&logo=Vue.js&logoColor=%234FC08D) ![Status](https://img.shields.io/badge/status-active-success.svg)
 
-# ✈️ Landing Rate Analysis  
+# ✈️ Approach & Landing Analysis  
 
 Bonjour!
-
 This is Fardad "D1CE" Pouran, from "*404th Freelancers*"!
 
 This project analyzes **Approach** and **Landing** performance from any given *flight data telemetry* containing multiple aircraft at once by visualizing all **Final Approach** profiles all the way to touchdown and beyond, and extracting key touchdown/impact parameters.
@@ -77,15 +76,15 @@ This project analyzes **Approach** and **Landing** performance from any given *f
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/fardad-d1ce/Landing-Rating.git
-   cd Landing-Rating
+   git clone https://github.com/fardad-d1ce/Approach-Landing-Analyzer.git
+   cd Approach-Landing-Analyzer
    ```
 
 2. **Install backend dependencies:**
    This project uses `uv` for dependency management. To automatically create a virtual environment and install all required packages, run:
    ```bash
    cd backend
-   uv sync
+   uv sync  
    ```
    *(If you don't have `uv` installed, see the [official installation guide](https://docs.astral.sh/uv/getting-started/installation/)).*
 
