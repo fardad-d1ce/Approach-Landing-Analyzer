@@ -1,6 +1,6 @@
 [input]
-CSV_PATH = "data/raw/Reduced_Tacview-20250831-211257-DCS-Client-IQT-1 Checkride 1.csv"
-# CSV_PATH = "data/raw/Tacview-20260728-212004-DCS-Host-TOS1.csv"
+# CSV_PATH = "data/raw/Reduced_Tacview-20250831-211257-DCS-Client-IQT-1 Checkride 1.csv"
+CSV_PATH = "data/raw/Tacview-20260801-163540-DCS.csv"
 SAMPLING_RATE = 10 # Hz: per second
 # in Tacview: sampling rate can be controlled when exporting.
 
@@ -13,7 +13,7 @@ SELECTED_PILOTS = [
             '< 404C > AliNikan', '< 404C > Eclipse', '<404>MOS',
             '< 404C > LCDR vici', 
             '< 404 > ALPHA-WHISKEY', '< 404 > Aria', '< 404 > A D L E R',
-            '< 404 > D1CE', '< 404 > FanBoy', '< 404 > Hawk_7', '< 404 > HoneyBadger'
+            '< 404 > D1CE', 'DICE', '< 404 > FanBoy', '< 404 > Hawk_7', '< 404 > HoneyBadger'
             ]
 PILOT_CALLSIGN_REGEX = '<\s*404[C]?\s*>(.*)'
 

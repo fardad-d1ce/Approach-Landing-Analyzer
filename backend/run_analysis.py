@@ -63,10 +63,12 @@ def main(csv_path: Path | str | None = None):
     for pilot in df_result['Pilot'].sort_values().unique():
         for sortie_num in df_result[df_result['Pilot'] == pilot]['sortie_num'].unique():
             is_sortie = plot_landing_profile(   df_sub, df_result, pilot, sortie_num, 
-                                    plots_output_path, record_date)            
+                                    plots_output_path, record_date, 
+                                    close_fig = True)            
             # optional:
             touchdown_plotter(  df_sub, df_result, pilot, sortie_num, 
-                                detailed_td_path, record_date)
+                                detailed_td_path, record_date, 
+                                close_fig = True)
             if not is_sortie:
                 continue
             

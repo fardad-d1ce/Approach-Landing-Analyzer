@@ -373,7 +373,8 @@ def plot_landing_profile(   df_sub:     pd.DataFrame,
                             pilot: str,
                             sortie_num: int,
                             output_path: Path,
-                            record_date : str) -> None:
+                            record_date : str,
+                            close_fig: bool = True) -> bool:
     '''
     Integrate and Visualize the whole approach and landing profile.
     '''
@@ -610,7 +611,8 @@ def plot_landing_profile(   df_sub:     pd.DataFrame,
                 dpi=300, 
                 bbox_inches='tight'
     )
-    plt.close(fig) # Prevent memory leak warning
+    if close_fig:
+        plt.close(fig) # Prevent memory leak warning
     return is_sortie
 
 def touchdown_plotter(  df_sub      : pd.DataFrame,
@@ -618,7 +620,8 @@ def touchdown_plotter(  df_sub      : pd.DataFrame,
                         pilot       : str, 
                         sortie_num  : int,
                         output_path : Path,
-                        record_date : str):
+                        record_date : str,
+                        close_fig   : bool = True):
     """
     Plot the touchdown/impact moment of a pilot at a specific sortie.
     """
@@ -805,7 +808,8 @@ def touchdown_plotter(  df_sub      : pd.DataFrame,
                             ), 
                 dpi=300, bbox_inches='tight'
                 )
-    plt.close(fig) # Prevent memory leak warning
+    if close_fig:
+        plt.close(fig) # Prevent memory leak warning
 
 def style_result_table( df_result : pd.DataFrame,
                         output_path : Path,
