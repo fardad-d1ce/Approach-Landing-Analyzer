@@ -24,7 +24,8 @@ def read_telemetry_csv(file_path: str | Path) -> pd.DataFrame:
         raise FileNotFoundError(f"CSV file not found: {path}")
 
     try:
-        df = pd.read_csv(path)
+        dtype={'Id': str}
+        df = pd.read_csv(path, dtype=dtype)
     except Exception as exc:
         raise CSVInputError(f"Failed to read CSV file: {path}") from exc
 
@@ -82,6 +83,6 @@ def load_runway_db(ref_dir: Path | str) -> pd.DataFrame:
     runway_db.rename(columns={'name': 'airport_name'}, inplace=True)
 
     if runway_db.empty:
-        raise ValueError(f"Runway DB is empty after processing CSVs in {db_dir}")
+        raise ValueError(f"Runway DB is empty after processing CSVs in {ref_dir}")
 
     return runway_db
