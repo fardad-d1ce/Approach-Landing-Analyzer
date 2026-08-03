@@ -7,6 +7,8 @@ import pandas as pd
 import numpy as np
 import openpyxl
 
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.colors as mcolors
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
