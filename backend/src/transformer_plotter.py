@@ -1,4 +1,5 @@
 import os
+import re
 import tomllib
 from pathlib import Path
 
@@ -34,11 +35,26 @@ def resolve_project_path(value: str) -> Path:
     path = Path(value)
     return path if path.is_absolute() else PROJECT_ROOT / path
 
-CSV_PATH        = resolve_project_path(config["input"]["CSV_PATH"])
 sampling_rate   = config["input"]["SAMPLING_RATE"]
 selected_pilots = config["squadron"]["SELECTED_PILOTS"]
 YOUR_SQUADRON   = config["squadron"]["NAME"]
 RESULTS_DIR     = resolve_project_path(config["output"]["RESULTS_DIR"])
+
+####################################################
+# Normalizing Names
+def normalize_name(text):
+    if not isinstance(text, str):
+        return text
+    # Convert to lowercase
+    text = text.lower()
+    # Standardize whitespace inside angle brackets, e.g., '< 103 >' -> '<103>'
+    text = re.sub(r'<\s*', '<', text)
+    text = re.sub(r'\s*>', '>', text)
+    # Collapse multiple consecutive spaces into a single space and strip leading/trailing space
+    text = re.sub(r'\s+', ' ', text).strip()
+    return text
+
+normalized_selected_pilots = [normalize_name(pilot) for pilot in selected_pilots]
 
 ####################################################
 # Descent Quality Labels & Colormaps
@@ -71,7 +87,7 @@ def transform_telemetry(df: pd.DataFrame) -> pd.DataFrame:
                     'CAS', 'AGL', 'VS']]
 
     # Filter for selected pilots
-    df_sub = df_sub[df_sub['Pilot'].isin(selected_pilots)]
+    df_sub = df_sub[df_sub['Pilot'].apply(normalize_name).isin(normalized_selected_pilots)]
 
     # Unit Conversion
     df_sub.loc[:, 'CAS'] = df_sub['CAS'] * 2       # convert CAS from unknown to kts
