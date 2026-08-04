@@ -8,8 +8,13 @@ import pandas as pd
 import numpy as np
 import openpyxl
 
+
+import sys
 import matplotlib
-matplotlib.use('Agg')
+# Only use the non-interactive 'Agg' backend if we are NOT running inside a Jupyter Notebook
+if 'ipykernel' not in sys.modules:
+    matplotlib.use('Agg') # Prevent memory leak warning
+
 import matplotlib.colors as mcolors
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
@@ -270,6 +275,7 @@ def touchdown_discovery(df_sub: pd.DataFrame, runway_db: pd.DataFrame) -> pd.Dat
         df_result['rwy_threshold_long'].values
     ).astype(int)
 
+    print("All touchdown instances are discovered in df_result!")
     return df_result
 
 def full_landing_profile_df(df_sub:     pd.DataFrame, 
@@ -496,12 +502,26 @@ def plot_landing_profile(   df_sub:     pd.DataFrame,
     ax.invert_xaxis() # Invert x-axis to show glideslope
 
     # LABELS & TITLES
-    ax.set_title(f' Approach Profile Analysis', fontsize=22, family='cursive')
+    ax.set_title(f' Approach Profile',  fontsize=22, family='cursive',
+                                        fontstyle='normal')
     
     ax.text(0.01, 1.05, YOUR_SQUADRON, transform=ax.transAxes, fontsize=18,
             fontstyle='italic', va='top', ha='left')
             #, bbox=dict(facecolor='white', edgecolor='black', boxstyle='round,pad=1'))
-
+    airport_runway_string = (
+        f"{df_result[
+                        (df_result['Pilot'] == pilot) &
+                        (df_result['sortie_num'] == sortie_num)
+                    ]['Airport'].iloc[0]} "
+        f"Rwy {df_result[
+                        (df_result['Pilot'] == pilot) &
+                        (df_result['sortie_num'] == sortie_num)
+                    ]['Runway'].iloc[0]}"
+    )
+    ax.text(0.99, 1.05, airport_runway_string, 
+                        transform=ax.transAxes, fontsize=18,
+                        fontstyle='italic', va='top', ha='right')
+    
     # dataset time
     dataset_time = pd.to_datetime (
                         df_result[
@@ -759,8 +779,21 @@ def touchdown_plotter(  df_sub      : pd.DataFrame,
     # ax4.grid(axis='y', which='minor', linestyle=':', linewidth='0.5', color='gray') 
 
     # TITLES
-    plt.title(f'Touchdown Analysis', fontsize=22, fontweight='bold', family='cursive')
-    
+    plt.title(f'Touchdown Analysis', fontsize=22, family='cursive')
+    airport_runway_string = (
+        f"{df_result[
+                        (df_result['Pilot'] == pilot) &
+                        (df_result['sortie_num'] == sortie_num)
+                    ]['Airport'].iloc[0]} "
+        f"Rwy {df_result[
+                        (df_result['Pilot'] == pilot) &
+                        (df_result['sortie_num'] == sortie_num)
+                    ]['Runway'].iloc[0]}"
+    )
+    ax1.text(0.99, 1.05, airport_runway_string, 
+                        transform=ax1.transAxes, fontsize=18,
+                        fontstyle='italic', va='top', ha='right')
+
     ax1.text(np.mean(ax1.get_xlim())*1, ax1.get_ylim()[1]*0.9, 
             f'Landing #{sortie_num}: {df_plot["Pilot"].iloc[0]}', 
             fontsize=14, ha='center', va= 'center_baseline', color='k',

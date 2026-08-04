@@ -9,6 +9,15 @@ const selectedFile = ref(null)
 const analysisResults = ref(null)
 const evaluationTableHtml = ref('')
 const fileInput = ref(null)
+const selectedChartUrl = ref(null)
+
+const openModal = (url) => {
+  selectedChartUrl.value = url
+}
+
+const closeModal = () => {
+  selectedChartUrl.value = null
+}
 
 const handleFileChange = (event) => {
   const file = event.target.files[0]
@@ -190,8 +199,9 @@ const loadLatest = async () => {
           <img
             :src="toApiUrl(chart.url)"
             :alt="chart.title"
-            class="chart-image"
+            class="chart-image clickable-chart"
             loading="lazy"
+            @click="openModal(toApiUrl(chart.url))"
           />
           <div class="chart-meta">
             <h3>{{ chart.title }}</h3>
@@ -201,6 +211,16 @@ const loadLatest = async () => {
       </div>
       <p v-else class="empty-state">No landing charts were generated for this run.</p>
     </section>
+
+    <!-- Modal for Enlarged Chart -->
+    <Teleport to="body">
+      <div v-if="selectedChartUrl" class="modal-overlay" @click="closeModal">
+        <div class="modal-content" @click.stop>
+          <button class="close-modal-btn" @click="closeModal" title="Close">✕</button>
+          <img :src="selectedChartUrl" alt="Enlarged Chart" class="enlarged-image" />
+        </div>
+      </div>
+    </Teleport>
   </main>
 </template>
 
@@ -424,6 +444,76 @@ const loadLatest = async () => {
   margin: 0;
   font-size: 0.9rem;
   word-break: break-word;
+}
+
+.clickable-chart {
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.clickable-chart:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.1);
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(15, 23, 42, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.modal-content {
+  position: relative;
+  width: 80vw;
+  height: 80vh;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.close-modal-btn {
+  position: absolute;
+  top: -16px;
+  right: -16px;
+  background: #ffffff;
+  border: 1px solid #d9e2ec;
+  color: #102a43;
+  font-size: 1.2rem;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: all 0.2s ease;
+  z-index: 1001;
+}
+
+.close-modal-btn:hover {
+  background: #f8fbff;
+  color: #e25c5c;
+  transform: scale(1.1);
+}
+
+.enlarged-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 8px;
 }
 
 .empty-state {

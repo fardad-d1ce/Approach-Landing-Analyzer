@@ -85,4 +85,5 @@ def load_runway_db(ref_dir: Path | str) -> pd.DataFrame:
     if runway_db.empty:
         raise ValueError(f"Runway DB is empty after processing CSVs in {ref_dir}")
 
+    print("Runway DB loaded successfully.")
     return runway_db
