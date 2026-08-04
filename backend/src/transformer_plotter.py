@@ -604,7 +604,7 @@ def plot_landing_profile(   df_sub:     pd.DataFrame,
             bbox=dict(facecolor='white', edgecolor='black', boxstyle='round,pad=1'))
 
     ax.annotate(f"Touchdown CAS  :  {int(td_cas_kt)}   kt\n"
-                f"Impact tate         : {int(td_vs_fpm)}  fpm\n\n"
+                f"Impact rate         : {int(td_vs_fpm)}  fpm\n\n"
                 f"Distance to threshold : {int(dist_td_to_threshold)} ft", 
                 arrowprops=dict(facecolor='black', arrowstyle="->", 
                                         connectionstyle="arc3, rad=-0.1"
