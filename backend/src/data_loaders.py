@@ -35,7 +35,8 @@ def read_telemetry_csv(file_path: str | Path) -> pd.DataFrame:
             "CSV schema mismatch. Missing required columns: "
             + ", ".join(missing)
         )
-
+    print(f"Successfully read CSV file: {path}")
+    print("Pilots:", df['Pilot'].unique())
     return df
 
 def load_runway_db(ref_dir: Path | str) -> pd.DataFrame:

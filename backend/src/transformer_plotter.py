@@ -48,6 +48,9 @@ RESULTS_DIR     = resolve_project_path(config["output"]["RESULTS_DIR"])
 ####################################################
 # Normalizing Names
 def normalize_name(text):
+    '''
+    Normalize the pilot name to a standard format, e.g., '< 404C > Dragon 5' -> 'dragon 5'
+    '''
     if not isinstance(text, str):
         return text
     # Convert to lowercase
@@ -140,7 +143,8 @@ def transform_telemetry(df: pd.DataFrame) -> pd.DataFrame:
                                         labels=labels,
                                         include_lowest=True
                                     )
-
+    print(f"Successfully selected {len(df_sub)} rows of data.")
+    print("Selected Pilots:", df_sub['Pilot'].unique())
     return df_sub
 
 def touchdown_discovery(df_sub: pd.DataFrame, runway_db: pd.DataFrame) -> pd.DataFrame:
@@ -276,6 +280,7 @@ def touchdown_discovery(df_sub: pd.DataFrame, runway_db: pd.DataFrame) -> pd.Dat
     ).astype(int)
 
     print("All touchdown instances are discovered in df_result!")
+    print("Pilots with discovered touchdowns:", df_result['Pilot'].unique())
     return df_result
 
 def full_landing_profile_df(df_sub:     pd.DataFrame, 
@@ -652,6 +657,110 @@ def plot_landing_profile(   df_sub:     pd.DataFrame,
     if close_fig:
         plt.close(fig) # Prevent memory leak warning
     return is_sortie
+
+def profile_plot(   df_plot: pd.DataFrame,
+                    timestamp1: str,
+                    timestamp2: str,
+                    output_path: Path,
+                    record_date: str,
+                    close_fig: bool = True):
+    '''
+    Plot the AGL profile over the given timestamp interval without touchdown illustrations.
+    '''
+    t1 = pd.to_datetime(timestamp1)
+    t2 = pd.to_datetime(timestamp2)
+    
+    # Ensure timezone naiveness for comparison
+    timestamps = df_plot['timestamp'].dt.tz_localize(None) if df_plot['timestamp'].dt.tz is not None else df_plot['timestamp']
+    
+    mask = (timestamps >= t1) & (timestamps <= t2)
+    df_interval = df_plot[mask].copy().sort_values('timestamp_seconds')
+    
+    if df_interval.empty:
+        print(f"No data available between {timestamp1} and {timestamp2}")
+        return
+        
+    pilot = df_interval['Pilot'].iloc[0]
+            
+    ############################################################    
+    # PLOT SIZE + AXES LIMITS
+    fig, ax = plt.subplots(figsize=(15, 9))
+    
+    ############################################################
+    # Plot: Interval Profile
+    # Map colors to descent_qualities
+    colors = df_interval['descent_quality'].map(color_map, na_action=None)
+    # Create segments for the LineCollection
+    points = np.array(
+                        [ df_interval['timestamp_seconds'], 
+                        df_interval['AGL']
+                        ]
+                ).T.reshape(-1, 1, 2)
+    segments = np.concatenate([points[:-1], points[1:]], axis=1)  
+    # Create a LineCollection object: colors are applied to each segment
+    lc = LineCollection(segments, colors=colors[:-1], linewidths=2)
+
+    ############################################################
+    # PLOTTING lines
+    ax.add_collection(lc)
+    ax.autoscale_view()
+
+    # X-axis limits
+    x_min, x_max = df_interval['timestamp_seconds'].min(), df_interval['timestamp_seconds'].max()
+    padding = (x_max - x_min) * 0.05 if x_max > x_min else 10
+    ax.set_xlim(x_min - padding, x_max + padding)
+    
+    # Y-axis limits
+    y_max = df_interval['AGL'].max()
+    ax.set_ylim(0, max(y_max * 1.1, 1500) if not pd.isna(y_max) else 1500)
+
+    # BACKGROUND GRAPHICS
+    ax.grid(True, linestyle='--', alpha=0.3) # gridlines + adjusted alpha
+    ax.set_facecolor("#f7fbfc")
+
+    # LABELS & TITLES
+    ax.set_title(f'Flight Profile Interval',  fontsize=22, family='cursive',
+                                        fontstyle='normal')
+    
+    ax.text(0.01, 1.05, YOUR_SQUADRON, transform=ax.transAxes, fontsize=18,
+            fontstyle='italic', va='top', ha='left')
+    
+    ax.text(np.mean(ax.get_xlim()), ax.get_ylim()[1]*0.9, 
+            f'Pilot: {pilot}\n\n'
+            f"Interval: {timestamp1} \nto\n {timestamp2}", 
+            fontsize=14, ha='center', va= 'center_baseline', color='k',
+            bbox=dict(facecolor='white',  edgecolor='black', 
+                                                    boxstyle='round,pad=1'))
+    
+    ax.set_ylabel('AGL (ft)')
+    ax.set_xlabel('Time (hh:mm:ss.s)')
+
+    ax.xaxis.set_major_formatter(plt.FuncFormatter(format_seconds))
+
+    # DESPINE
+    sns.despine(ax=ax)
+
+    ############################################################
+    # LEGENDS
+    color_map_last_segments = {k: color_map[k] for k in list(color_map.keys())[:]}
+    legend_elements = [Line2D([0], [0], color=color, lw=2, label=f'VS: {label}')
+                    for label, color in color_map_last_segments.items()]
+    
+    legend1 = ax.legend(handles=legend_elements, prop={'family': 'monospace', 'size': 10}, 
+                bbox_to_anchor=(1., 1), loc='upper right', shadow=True)
+    ax.add_artist(legend1)
+
+    # EXPORT PLOTS
+    safe_t1 = timestamp1.replace(':', '').replace('-', '').replace(' ', '_')
+    # fig.savefig(os.path.join(
+    #                 output_path, 
+    #                 f'{record_date}_{replace_angles(pilot)}_profile_{safe_t1}.png'
+    #                 ),
+    #             dpi=300, 
+    #             bbox_inches='tight'
+    # )
+    if close_fig:
+        plt.close(fig) # Prevent memory leak warning
 
 def touchdown_plotter(  df_sub      : pd.DataFrame,
                         df_result   : pd.DataFrame,
