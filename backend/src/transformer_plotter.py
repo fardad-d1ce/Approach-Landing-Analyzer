@@ -25,7 +25,7 @@ import seaborn as sns
 
 from src.data_loaders import CSVInputError
 from src.geographic_calculations import (find_closest_runway, 
-                                        haversine)
+                                        haversine, bearing_true)
 from src.parsers import (replace_angles, 
                         format_seconds)
 
@@ -90,8 +90,10 @@ color_map = dict(zip(labels, colors_list))
 def transform_telemetry(df: pd.DataFrame) -> pd.DataFrame:
     '''
     Transform the telemetry data to desired formats.
+    Returns:
+        df_sub
     '''
-    df_sub = df[['ISO time', 'Name', 'Pilot', 'Longitude','Latitude', 
+    df_sub = df[['ISO time', 'Name', 'Pilot', 'Longitude', 'Latitude', 
                     'CAS', 'AGL', 'VS']]
 
     # Filter for selected pilots
@@ -121,6 +123,16 @@ def transform_telemetry(df: pd.DataFrame) -> pd.DataFrame:
     #drop the 'ISO time'
     df_sub.drop(columns=['ISO time'], inplace=True)
 
+    # True Heading
+    next_lat = df_sub.groupby('Pilot')['Latitude'].shift(-1)
+    next_lon = df_sub.groupby('Pilot')['Longitude'].shift(-1)
+    df_sub['heading_true'] = bearing_true(
+        df_sub['Latitude'], 
+        df_sub['Longitude'], 
+        next_lat, 
+        next_lon
+    )
+
     # Time, AGL, VS increments
     time_diff = df_sub.groupby('Pilot')['timestamp_seconds'].\
                                 transform(lambda row: row.shift(-1) - row.shift(1))
@@ -143,8 +155,8 @@ def transform_telemetry(df: pd.DataFrame) -> pd.DataFrame:
                                         labels=labels,
                                         include_lowest=True
                                     )
-    print(f"Successfully selected {len(df_sub)} rows of data.")
-    print("Selected Pilots:", df_sub['Pilot'].unique())
+    print(f"\nSuccessfully selected {len(df_sub)} rows of data.")
+    print("Selected Pilots:", df_sub['Pilot'].unique().tolist())
     return df_sub
 
 def touchdown_discovery(df_sub: pd.DataFrame, runway_db: pd.DataFrame) -> pd.DataFrame:
@@ -261,7 +273,8 @@ def touchdown_discovery(df_sub: pd.DataFrame, runway_db: pd.DataFrame) -> pd.Dat
     # ------ Runway Detection ------
     rwy_matches = df_result.apply(
         lambda row: find_closest_runway(row["td_latitude"], 
-                                        row["td_longitude"],
+                                        row["td_longitude"], 
+                                        row["heading_true"],
                                         runway_db=runway_db),
         axis=1,
     )
@@ -279,8 +292,8 @@ def touchdown_discovery(df_sub: pd.DataFrame, runway_db: pd.DataFrame) -> pd.Dat
         df_result['rwy_threshold_long'].values
     ).astype(int)
 
-    print("All touchdown instances are discovered in df_result!")
-    print("Pilots with discovered touchdowns:", df_result['Pilot'].unique())
+    print("\nAll touchdown instances are discovered in df_result!")
+    print("Pilots with discovered touchdowns:", df_result['Pilot'].unique().tolist())
     return df_result
 
 def full_landing_profile_df(df_sub:     pd.DataFrame, 

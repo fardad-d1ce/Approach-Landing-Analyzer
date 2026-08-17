@@ -36,7 +36,7 @@ def read_telemetry_csv(file_path: str | Path) -> pd.DataFrame:
             + ", ".join(missing)
         )
     print(f"Successfully read CSV file: {path}")
-    print("Pilots:", df['Pilot'].unique())
+    print("Pilots:", df['Pilot'].unique().tolist())
     return df
 
 def load_runway_db(ref_dir: Path | str) -> pd.DataFrame:
@@ -57,8 +57,10 @@ def load_runway_db(ref_dir: Path | str) -> pd.DataFrame:
                                                     'iata_code', 'icao_code'])
     df_runways = pd.read_csv(runways_path, 
                                 usecols=['airport_ref', 
-                                        'le_ident', 'le_latitude_deg', 'le_longitude_deg', 
-                                        'he_ident', 'he_latitude_deg', 'he_longitude_deg'])
+                                        'le_ident', 'le_latitude_deg', 'le_longitude_deg',
+                                        'le_heading_degT',
+                                        'he_ident', 'he_latitude_deg', 'he_longitude_deg',
+                                        'he_heading_degT'])
 
     # Merge airports with runways
     df_merged = pd.merge(df_runways, df_airports,   left_on='airport_ref', 
@@ -67,14 +69,18 @@ def load_runway_db(ref_dir: Path | str) -> pd.DataFrame:
 
     # Unpivot the runways so that each threshold (le and he) gets its own row
     df_le = df_merged[['name', 'iata_code', 'icao_code', 
-                        'le_ident', 'le_latitude_deg', 'le_longitude_deg']].copy()
+                        'le_ident', 'le_latitude_deg', 'le_longitude_deg', 
+                        'le_heading_degT']].copy()
     df_le.rename(columns={'le_ident': 'runway_name', 'le_latitude_deg': 'lat', 
-                            'le_longitude_deg': 'lon'}, inplace=True)
+                            'le_longitude_deg': 'lon', 
+                            'le_heading_degT': 'heading_T'}, inplace=True)
 
     df_he = df_merged[['name', 'iata_code', 'icao_code', 
-                        'he_ident', 'he_latitude_deg', 'he_longitude_deg']].copy()
+                        'he_ident', 'he_latitude_deg', 'he_longitude_deg', 
+                        'he_heading_degT']].copy()
     df_he.rename(columns={'he_ident': 'runway_name', 'he_latitude_deg': 'lat', 
-                            'he_longitude_deg': 'lon'}, inplace=True)
+                            'he_longitude_deg': 'lon', 
+                            'he_heading_degT': 'heading_T'}, inplace=True)
 
     # Combine both ends
     runway_db = pd.concat([df_le, df_he], ignore_index=True)
