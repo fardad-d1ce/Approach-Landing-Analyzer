@@ -104,6 +104,9 @@ def transform_telemetry(df: pd.DataFrame) -> pd.DataFrame:
     df_sub.loc[:, 'VS' ] = df_sub['VS' ] * 196.85  # convert VS from m/s to ft/min
     df_sub.loc[:, 'AGL'] = df_sub['AGL'] * 3.28084 # convert AGL from m to ft
 
+    # Filter df_sub for better performance
+    df_sub = df_sub[(df_sub['AGL']<4000) & (df_sub['CAS']>0) & (df_sub['CAS']<300)]
+
     # Clean-up from NaN values for `VS`
     df_sub = df_sub.dropna(axis=0, subset=['VS']).reset_index(drop=True)
 
@@ -269,6 +272,7 @@ def touchdown_discovery(df_sub: pd.DataFrame, runway_db: pd.DataFrame) -> pd.Dat
     df_result['td_timestamp'] = df_result['td_timestamp'].dt.tz_localize(None)
     df_result['CAS_kt'] = df_result['CAS_kt'].astype(int)
     df_result['VS_fpm'] = df_result['VS_fpm'].astype(int)
+    df_result['heading_true'] = df_result['heading_true'].astype(int)
     
     # ------ Runway Detection ------
     rwy_matches = df_result.apply(
@@ -458,7 +462,7 @@ def plot_landing_profile(   df_sub:     pd.DataFrame,
     td_point = (df_result.loc[
                     (df_result['Pilot'] == pilot) & \
                     (df_result['sortie_num'] == sortie_num ), 
-                    ['td_longitude', 'td_latitude']
+                    ['td_latitude', 'td_longitude']
                 ]
     ).values[0]
     runway_threshold = (df_result.loc[
@@ -467,7 +471,7 @@ def plot_landing_profile(   df_sub:     pd.DataFrame,
                     ['rwy_threshold_lat', 'rwy_threshold_long']
                 ]
     ).values[0]
-    dist_td_to_threshold = haversine(runway_threshold[1], runway_threshold[0], 
+    dist_td_to_threshold = haversine(runway_threshold[0], runway_threshold[1], 
                                     td_point[0], td_point[1])
 
     # Find AGL at threshold:
@@ -613,11 +617,11 @@ def plot_landing_profile(   df_sub:     pd.DataFrame,
             next_td_point = (df_result.loc[
                                     (df_result['Pilot'] == pilot) & 
                                     (df_result['sortie_num'] == sortie_num + 1 ), 
-                                    ['td_longitude', 'td_latitude']
+                                    ['td_latitude', 'td_longitude']
                                     ]
                             ).values[0]
             dist_next_td_to_threshold = haversine(
-                                        runway_threshold[1], runway_threshold[0], 
+                                        runway_threshold[0], runway_threshold[1], 
                                         next_td_point[0], next_td_point[1]
                                         )
 
