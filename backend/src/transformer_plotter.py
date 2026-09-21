@@ -290,11 +290,14 @@ def touchdown_discovery(df_sub: pd.DataFrame, runway_db: pd.DataFrame) -> pd.Dat
     df_result["rwy_threshold_long"] = rwy_matches_df["runway_coordinates"].str[1]
     
     df_result['touchdown_to_threshold_ft'] =  haversine(
-        df_result['td_latitude'].values, 
-        df_result['td_longitude'].values, 
-        df_result['rwy_threshold_lat'].values, 
-        df_result['rwy_threshold_long'].values
-    ).astype(int)
+        df_result['td_latitude'].values.astype(float), 
+        df_result['td_longitude'].values.astype(float), 
+        df_result['rwy_threshold_lat'].values.astype(float), 
+        df_result['rwy_threshold_long'].values.astype(float)
+    )
+    df_result['touchdown_to_threshold_ft'] = pd.to_numeric(
+        df_result['touchdown_to_threshold_ft'], errors='coerce'
+    ).round().astype('Int64')
 
     print("\nAll touchdown instances are discovered in df_result!")
     print("Pilots with discovered touchdowns:", df_result['Pilot'].unique().tolist())
@@ -474,6 +477,15 @@ def plot_landing_profile(   df_sub:     pd.DataFrame,
     dist_td_to_threshold = haversine(runway_threshold[0], runway_threshold[1], 
                                     td_point[0], td_point[1])
 
+    # Handle NaN distance when no runway is found
+    if pd.isna(dist_td_to_threshold):
+        dist_td_to_threshold = 0.0
+        dist_td_str = "N/A"
+        x_label = 'Distance to Touchdown (ft)'
+    else:
+        dist_td_str = f"{int(dist_td_to_threshold)} ft"
+        x_label = 'Distance to Threshold (ft)'
+
     # Find AGL at threshold:
     df_plot_sorted = df_plot.sort_values('distance_to_touchdown_plot')
     agl_at_threshold = np.interp(
@@ -492,8 +504,9 @@ def plot_landing_profile(   df_sub:     pd.DataFrame,
     relative_ymax = (agl_at_threshold - y_min) / (y_max - y_min)
     
     #threshold marker
-    ax.axvline(x= 0, color='darkred', linestyle=':', 
-                    linewidth=0.5, ymin=0, ymax=relative_ymax*3)
+    if dist_td_str != "N/A":
+        ax.axvline(x= 0, color='darkred', linestyle=':', 
+                        linewidth=0.5, ymin=0, ymax=relative_ymax*3)
     #touchdown point marker
     ax.axvline(x= -dist_td_to_threshold, color='darkblue', linestyle='--', 
                     linewidth=1, ymin=0, ymax=80/y_max)
@@ -559,7 +572,7 @@ def plot_landing_profile(   df_sub:     pd.DataFrame,
                                                     boxstyle='round,pad=1'))
     
     ax.set_ylabel('AGL (ft)')
-    ax.set_xlabel('Distance to Threshold (ft)')
+    ax.set_xlabel(x_label)
 
     # DESPINE
     sns.despine(ax=ax)
@@ -624,10 +637,14 @@ def plot_landing_profile(   df_sub:     pd.DataFrame,
                                         runway_threshold[0], runway_threshold[1], 
                                         next_td_point[0], next_td_point[1]
                                         )
+            if pd.isna(dist_next_td_to_threshold):
+                dist_next_td_str = "N/A"
+            else:
+                dist_next_td_str = f"{int(dist_next_td_to_threshold)} ft"
 
             ax.annotate(f"Next touch CAS  : {int(td_cas_kt_next)}   kt\n"
                         f"Next touch rate  : {int(td_vs_fpm_next)}    fpm\n\n"
-                        f"Next touch to threshold : {int(dist_next_td_to_threshold)} ft", 
+                        f"Next touch to threshold : {dist_next_td_str}", 
                         arrowprops=dict(facecolor='black', arrowstyle="->", 
                                                 connectionstyle="arc3, rad=-0.1"
                                                 ), 
@@ -647,7 +664,7 @@ def plot_landing_profile(   df_sub:     pd.DataFrame,
 
     ax.annotate(f"Touchdown CAS  :  {int(td_cas_kt)}   kt\n"
                 f"Impact rate         : {int(td_vs_fpm)}  fpm\n\n"
-                f"Distance to threshold : {int(dist_td_to_threshold)} ft", 
+                f"Distance to threshold : {dist_td_str}", 
                 arrowprops=dict(facecolor='black', arrowstyle="->", 
                                         connectionstyle="arc3, rad=-0.1"
                                         ), 
