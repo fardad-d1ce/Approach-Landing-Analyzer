@@ -182,16 +182,15 @@ def touchdown_discovery(df_sub: pd.DataFrame, runway_db: pd.DataFrame) -> pd.Dat
     grouped_by_pilot = df_sub.groupby('Pilot')
 
     # Condition 1: AGL is a local minimum (current AGL is less than previous AND next)
-    is_decreasing_agl = (df_sub['AGL'] < grouped_by_pilot['AGL'].transform('shift', +1)) & \
-                        (df_sub['AGL'] < agl_threshold) & \
+    is_decreasing_agl = (df_sub['AGL'] <= agl_threshold) & \
+                        (df_sub['AGL'] <= grouped_by_pilot['AGL'].transform('shift', +1)) & \
                         (df_sub['AGL'] - grouped_by_pilot['AGL'].\
                                     rolling(window=5*sampling_rate, center=True, min_periods=1).\
                                     min().reset_index(level=0, drop=True) 
-                                    < 3)  &\
+                                    <= 3)  &\
                         (grouped_by_pilot['AGL'].\
-                                    rolling(window=10*sampling_rate, min_periods=1).\
+                                    rolling(window=15*sampling_rate, min_periods=1, center=False).\
                                     max().reset_index(level=0, drop=True) > 20)
-                        # (df_sub['AGL'] < grouped_by_pilot['AGL'].transform('shift', +1)) & \  
 
     # Condition 2: VS is below the threshold
     is_low_vs = (df_sub['VS'] < vs_threshold) & (df_sub['VS'] > -2000) # Sanity Check
@@ -225,7 +224,8 @@ def touchdown_discovery(df_sub: pd.DataFrame, runway_db: pd.DataFrame) -> pd.Dat
                         is_low_vs & 
                         is_above_stall & 
                         is_local_max_jerk & 
-                        is_positive_acc)
+                        is_positive_acc
+                        )
     df_td_candidates = df_sub[all_conditions_met].copy()
 
     # A "TRUE TOUCHDOWN" is a candidate where the time since the last one is > 5 seconds,
@@ -309,6 +309,8 @@ def full_landing_profile_df(df_sub:     pd.DataFrame,
                             sortie_num: int) -> pd.DataFrame:
     '''
     Integrate the approach data with the touchdown data.
+    output: 
+        df_plot: pd.DataFrame
     '''
     # Which part of final approach are we interested in?
     final_segment      = 60
@@ -692,23 +694,31 @@ def plot_landing_profile(   df_sub:     pd.DataFrame,
         plt.close(fig) # Prevent memory leak warning
     return is_sortie
 
-def profile_plot(   df_plot: pd.DataFrame,
+def profile_plot(   df_sub: pd.DataFrame,
                     timestamp1: str,
                     timestamp2: str,
-                    output_path: Path,
-                    record_date: str,
+                    output_path: Path = None,
+                    record_date: str = None,
                     close_fig: bool = True):
     '''
     Plot the AGL profile over the given timestamp interval without touchdown illustrations.
+    input:
+        df_sub: pd.DataFrame
+        pilot: str
+        timestamp1: str
+        timestamp2: str
+        output_path: Path
+        record_date: str
+        close_fig: bool = True
     '''
     t1 = pd.to_datetime(timestamp1)
     t2 = pd.to_datetime(timestamp2)
     
     # Ensure timezone naiveness for comparison
-    timestamps = df_plot['timestamp'].dt.tz_localize(None) if df_plot['timestamp'].dt.tz is not None else df_plot['timestamp']
+    timestamps = df_sub['timestamp'].dt.tz_localize(None) if df_sub['timestamp'].dt.tz is not None else df_sub['timestamp']
     
     mask = (timestamps >= t1) & (timestamps <= t2)
-    df_interval = df_plot[mask].copy().sort_values('timestamp_seconds')
+    df_interval = df_sub[mask].copy().sort_values('timestamp_seconds')
     
     if df_interval.empty:
         print(f"No data available between {timestamp1} and {timestamp2}")
@@ -800,8 +810,8 @@ def touchdown_plotter(  df_sub      : pd.DataFrame,
                         df_result   : pd.DataFrame,
                         pilot       : str, 
                         sortie_num  : int,
-                        output_path : Path,
-                        record_date : str,
+                        output_path : Path = None,
+                        record_date : str = None,
                         close_fig   : bool = True):
     """
     Plot the touchdown/impact moment of a pilot at a specific sortie.
@@ -1005,9 +1015,143 @@ def touchdown_plotter(  df_sub      : pd.DataFrame,
     if close_fig:
         plt.close(fig) # Prevent memory leak warning
 
+def manual_touchdown_plotter(  df_sub      : pd.DataFrame,
+                        pilot       : str, 
+                        start_time  : tuple,
+                        end_time    : tuple,
+                        output_path : Path = None,
+                        record_date : str = None,
+                        close_fig   : bool = True):
+    """
+    Plot the touchdown/impact moment of a pilot at a specific time window.
+    """
+
+    # Manual time_window
+    t_0 = df_sub['timestamp'].iloc[0]
+    t_0 = t_0.hour*60*60 + t_0.minute*60 + t_0.second
+
+    start_time_second = dt.timedelta(hours=start_time[0], 
+                                    minutes=start_time[1], 
+                                    seconds=start_time[2]).total_seconds()
+    end_time_second = dt.timedelta(hours=end_time[0], 
+                                    minutes=end_time[1], 
+                                    seconds=end_time[2]).total_seconds()
+    time_window =   (start_time_second, end_time_second)
+
+    # Filter to Pilot and Time Window
+    df_plot = df_sub[df_sub['Pilot'] == pilot]
+    df_plot['timestamp_seconds'] = df_plot['timestamp_seconds'] + t_0
+    df_plot = df_plot[(df_plot['timestamp_seconds'] >= start_time_second) & (df_plot['timestamp_seconds'] <= end_time_second)]
+
+    #################### Jerk plot ##################
+
+    fig, ax1= plt.subplots(figsize=(15, 10))
+
+    sns.lineplot(data=df_plot, x='timestamp_seconds', y='vert_Jerk_fpm3', ax=ax1, 
+                color='k', linewidth=0.2, label='Jerk (fpm³)')
+
+    ax1_ylim = max(abs(ax1.get_ylim()[0]), abs(ax1.get_ylim()[1]))
+    ax1.set_ylim(-ax1_ylim, ax1_ylim)
+
+    # SPINE POSITION
+    # offset_text = ax1.yaxis.get_offset_text()
+    # offset_text.set_x(-0.20) # Adjust this value for perfect alignment
+    # offset_text.set_horizontalalignment('left')
+
+    # X-AXIS FORMATTING
+    plt.xlim(time_window)
+
+    ax1.xaxis.set_major_formatter(plt.FuncFormatter(format_seconds))
+    major_locator = ticker.MultipleLocator(1)   # Major ticks every ? seconds
+    minor_locator = ticker.MultipleLocator(0.5)  # Minor ticks every ? second
+    ax1.xaxis.set_major_locator(major_locator)
+    ax1.xaxis.set_minor_locator(minor_locator)
+
+    for label in ax1.get_xticklabels():
+        label.set(rotation=30, horizontalalignment='right', fontsize= 8)
+
+    # Y-AXIS FORMATTING
+    # plt.ylim(-0.8e5, 0.8e5)
+    formatter = ticker.ScalarFormatter(useMathText=False)
+    formatter.set_scientific(True)
+    formatter.set_powerlimits((-1, 1))
+    ax1.yaxis.set_major_formatter(formatter)
+
+    # #################### Vertical Acceleration plot ##################
+    # ax2 = ax1.twinx()    
+    # sns.lineplot(data=df_plot, x='timestamp_seconds', y='vert_Acc_fpm2', ax=ax2, 
+    #             color='blue', linewidth=0.1, label='Vertical Acceleration (fpm²)')
+
+    #################### Vertical Speed plot ##################
+    ax2 = ax1.twinx()
+    sns.lineplot(data=df_plot, x='timestamp_seconds', y='VS', ax=ax2, 
+                color='tab:orange', linewidth=1, label='Descent Rate (fpm)')
+
+    ax2.set_ylim(-1400, 1400)   
+    ax2.set_yticks(np.arange(-1400, 1500, 100), minor=True)
+
+    #################### AGL plot ##################
+    ax3 = ax1.twinx()
+    ax3.spines.right.set_position(("axes", 1.1))
+
+    sns.lineplot(data=df_plot, x='timestamp_seconds', y='AGL', ax=ax3, 
+                color='tab:blue', linewidth=3, label='AGL (ft)')
+
+    ax3.set_ylim(-50, 50)
+    ax3.set_yticks(np.arange(0, 51, 10), minor=False)
+
+    ax3.axhline(y=0, color='k', linestyle='-', linewidth=1)
+
+    # DESPINE
+    ax1.spines['top'].set_visible(False)
+    ax2.spines['top'].set_visible(False)
+    ax3.spines['top'].set_visible(False)
+
+    # GRIDLINES
+    ax1.grid(axis='x', which='major', linestyle='-', linewidth='0.1', color='gray')
+    # ax1.grid(axis='x', which='minor', linestyle=':', linewidth='0.5', color='gray')             
+    # ax4.grid(axis='y', which='major', linestyle='-', linewidth='0.5', color='gray') 
+    # ax4.grid(axis='y', which='minor', linestyle=':', linewidth='0.5', color='gray') 
+
+
+    ax1.text(np.mean(ax1.get_xlim())*1, ax1.get_ylim()[1]*0.9, 
+            f'Landing: {df_plot["Pilot"].iloc[0]}', 
+            fontsize=14, ha='center', va= 'center_baseline', color='k',
+            bbox=dict(facecolor='white', edgecolor='black', boxstyle='round,pad=1'))
+
+    ax1.set_xlabel('Time (hh:mm:ss.s)')
+    ax1.set_ylabel('Jerk (fpm³)')    
+    ax2.set_ylabel('Descent Rate (fpm)')
+    ax3.set_ylabel('AGL (ft)')
+    # ax1.set_ylabel('Vertical Acc (fpm²)')
+
+    # LEGENDS
+    ax1.get_legend().remove()
+    ax2.get_legend().remove()
+    ax3.get_legend().remove()
+
+    lines1, labels1 = ax1.get_legend_handles_labels()
+    lines2, labels2 = ax2.get_legend_handles_labels()
+    lines3, labels3 = ax3.get_legend_handles_labels()
+    
+    ax1.legend(lines3 + lines2 + lines1, labels3 + labels2 + labels1, loc='lower right', shadow=True)
+    
+    # Output Path
+    # record_date = pd.to_datetime(df_result.loc[0,'td_timestamp'], errors='coerce').\
+    #             strftime('%Y.%m.%d').replace('.','')
+
+    # EXPORT PLOTS
+    # fig.savefig(os.path.join (output_path, 
+    #                         f'{record_date}_{replace_angles(pilot)}_touch.png'
+    #                         ), 
+    #             dpi=300, bbox_inches='tight'
+    #             )
+    if close_fig:
+        plt.close(fig) # Prevent memory leak warning
+
 def style_result_table( df_result : pd.DataFrame,
-                        output_path : Path,
-                        record_date : str):
+                        output_path : Path = None,
+                        record_date : str = None):
     '''
     Stylizes & Exports the result table.
     '''
